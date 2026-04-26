@@ -9,6 +9,7 @@ export interface Task {
   status: TaskStatus;
   completedAt: string | null;
   createdAt: string;
+  scheduledDate: string | null;
 }
 
 export interface DailyReflection {
@@ -33,4 +34,4 @@ export interface AppState {
   isPro: boolean;
 }
 
-export type View = 'dump' | 'day' | 'reflect';
+export type View = 'dump' | 'day' | 'week' | 'month' | 'reflect';

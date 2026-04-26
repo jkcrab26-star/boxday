@@ -1,4 +1,4 @@
-import type { AppState, StreakData } from '../types';
+import type { AppState, StreakData, Task } from '../types';
 
 const KEY = 'boxday_v0';
 
@@ -12,11 +12,22 @@ export const DEFAULT_STATE: AppState = {
   isPro: false,
 };
 
+const DEFAULT_TASK_FIELDS: Pick<Task, 'scheduledDate' | 'estimatedMinutes' | 'completedAt'> = {
+  scheduledDate: null,
+  estimatedMinutes: null,
+  completedAt: null,
+};
+
 export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return DEFAULT_STATE;
-    return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw) as Partial<AppState>;
+    return {
+      ...DEFAULT_STATE,
+      ...parsed,
+      tasks: (parsed.tasks ?? []).map(t => ({ ...DEFAULT_TASK_FIELDS, ...t })),
+    };
   } catch {
     return DEFAULT_STATE;
   }

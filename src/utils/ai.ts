@@ -1,5 +1,60 @@
 import type { Task, BoxSlot } from '../types';
 
+export interface ScopeLockResult {
+  locked: boolean;
+  suggestion: string | null;
+}
+
+export async function aiScopeLock(task: Task): Promise<ScopeLockResult> {
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY as string | undefined;
+  if (!apiKey) return { locked: true, suggestion: null };
+
+  const prompt = `Evaluate if this task is specific enough to start immediately without more planning.
+
+Task: "${task.title}"
+Time estimate: ${task.estimatedMinutes ?? 'unknown'} minutes
+
+A well-scoped task has a clear start/end, requires no sub-decisions before beginning, and fits the time estimate.
+
+Respond with JSON only: {"locked": boolean, "suggestion": string|null}
+- locked: true if ready to start, false if too vague
+- suggestion: if not locked, one sentence making it more specific (null if locked)`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 150,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    if (!res.ok) return { locked: true, suggestion: null };
+    const data = await res.json();
+    const text: string = data.content?.[0]?.text ?? '{}';
+    return JSON.parse(text) as ScopeLockResult;
+  } catch {
+    return { locked: true, suggestion: null };
+  }
+}
+
+export function pickNextTask(completedTask: Task, candidates: Task[]): Task | null {
+  if (candidates.length === 0) return null;
+  const sameBox = candidates.filter(t => t.box === completedTask.box);
+  const pool = sameBox.length > 0 ? sameBox : candidates;
+  return pool.reduce((best, t) => {
+    const bestMin = best.estimatedMinutes ?? 60;
+    const tMin = t.estimatedMinutes ?? 60;
+    return tMin < bestMin ? t : best;
+  });
+}
+
 export interface AiBoxingResult {
   id: string;
   box: BoxSlot;
