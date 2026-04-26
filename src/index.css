@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #fafaf8;
+  color: #1a1916;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient Time Pulse — focus mode background.
+   Duration is set via --pulse-duration so it matches the task estimate. */
+@keyframes timePulse {
+  0%   { background-color: #f0f4ff; }
+  60%  { background-color: #fff8ed; }
+  100% { background-color: #fde8e0; }
+}
+
+.ambient-pulse {
+  animation: timePulse var(--pulse-duration, 25min) linear forwards;
+  min-height: 100dvh;
+}
+
+/* Drag-over slot highlight */
+.slot-active {
+  background-color: #ede9fe !important;
+  outline: 2px solid #5b47e0 !important;
+  outline-offset: -2px;
+}
