@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Task, BoxSlot, DailyReflection } from '../types';
 import { todayISO } from '../utils/storage';
+import { aiScopeLock } from '../utils/ai';
 
 const ZONES: { slot: BoxSlot; label: string; time: string; emoji: string; bgVar: string; accentVar: string }[] = [
   { slot: 'AM',      label: 'Morning',   time: '6am – 12pm', emoji: '☀️',  bgVar: '--am-bg',  accentVar: '--am-accent' },
@@ -10,6 +11,14 @@ const ZONES: { slot: BoxSlot; label: string; time: string; emoji: string; bgVar:
 
 const ESTIMATE_LABELS: Record<number, string> = { 15: '15m', 30: '30m', 60: '1h', 90: '90m' };
 const ESTIMATES = [15, 30, 60, 90];
+const HAS_API_KEY = !!(import.meta.env.VITE_ANTHROPIC_API_KEY as string | undefined);
+
+type ScopeLockState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'ok' }
+  | { status: 'suggestion'; text: string }
+  | { status: 'unavailable' };
 
 interface DayViewProps {
   tasks: Task[];
@@ -33,6 +42,14 @@ function TaskCard({
   onFocus: (id: string) => void;
 }) {
   const [showMove, setShowMove] = useState(false);
+  const [scopeState, setScopeState] = useState<ScopeLockState>({ status: 'idle' });
+
+  useEffect(() => {
+    if (scopeState.status === 'ok' || scopeState.status === 'unavailable') {
+      const t = setTimeout(() => setScopeState({ status: 'idle' }), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [scopeState.status]);
 
   function cycleEstimate() {
     const cur = task.estimatedMinutes;
@@ -41,145 +58,239 @@ function TaskCard({
     onSetEstimate(task.id, next);
   }
 
+  async function runScopeCheck() {
+    if (!HAS_API_KEY) {
+      setScopeState({ status: 'unavailable' });
+      return;
+    }
+    setScopeState({ status: 'loading' });
+    const result = await aiScopeLock(task);
+    if (result.locked) {
+      setScopeState({ status: 'ok' });
+    } else {
+      setScopeState({ status: 'suggestion', text: result.suggestion ?? 'Try breaking this task into a smaller first step.' });
+    }
+  }
+
   const isDone = task.status === 'done';
+  const hasSuggestion = scopeState.status === 'suggestion';
 
   return (
-    <div
-      draggable
-      onDragStart={e => e.dataTransfer.setData('taskId', task.id)}
-      style={{
-        background: '#fff',
-        borderRadius: 8,
-        padding: '10px 12px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        opacity: isDone ? 0.5 : 1,
-        transition: 'opacity 0.2s',
-        cursor: isDone ? 'default' : 'grab',
-        border: '1px solid #f0f0f5',
-      }}
-    >
-      {/* Complete button */}
-      <button
-        onClick={() => !isDone && onComplete(task.id)}
+    <div style={{ position: 'relative' }}>
+      <div
+        draggable
+        onDragStart={e => e.dataTransfer.setData('taskId', task.id)}
         style={{
-          width: 22,
-          height: 22,
-          borderRadius: '50%',
-          border: isDone ? 'none' : '2px solid #d1d5db',
-          background: isDone ? 'var(--done-color)' : 'transparent',
-          cursor: isDone ? 'default' : 'pointer',
-          flexShrink: 0,
+          background: '#fff',
+          borderRadius: hasSuggestion ? '8px 8px 0 0' : 8,
+          padding: '10px 12px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          color: '#fff',
-          fontSize: 12,
-          fontWeight: 700,
-          padding: 0,
+          gap: 10,
+          opacity: isDone ? 0.5 : 1,
+          transition: 'opacity 0.2s',
+          cursor: isDone ? 'default' : 'grab',
+          border: '1px solid #f0f0f5',
+          borderBottom: hasSuggestion ? '1px solid #fef3c7' : '1px solid #f0f0f5',
         }}
-        title={isDone ? 'Done' : 'Mark complete'}
       >
-        {isDone ? '✓' : ''}
-      </button>
+        {/* Complete button */}
+        <button
+          onClick={() => !isDone && onComplete(task.id)}
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            border: isDone ? 'none' : '2px solid #d1d5db',
+            background: isDone ? 'var(--done-color)' : 'transparent',
+            cursor: isDone ? 'default' : 'pointer',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: 12,
+            fontWeight: 700,
+            padding: 0,
+          }}
+          title={isDone ? 'Done' : 'Mark complete'}
+        >
+          {isDone ? '✓' : ''}
+        </button>
 
-      {/* Title */}
-      <span style={{
-        flex: 1,
-        fontSize: 14,
-        color: isDone ? 'var(--muted)' : 'var(--text)',
-        textDecoration: isDone ? 'line-through' : 'none',
-        lineHeight: 1.4,
-      }}>
-        {task.title}
-      </span>
-
-      {/* Actions (hidden when done) */}
-      {!isDone && (
-        <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
-          <button
-            onClick={cycleEstimate}
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: task.estimatedMinutes ? 'var(--brand)' : '#9ca3af',
-              background: task.estimatedMinutes ? 'var(--brand-light)' : '#f3f4f6',
-              border: 'none',
-              borderRadius: 5,
-              padding: '2px 6px',
-              cursor: 'pointer',
-              minWidth: 30,
-            }}
-          >
-            {task.estimatedMinutes ? ESTIMATE_LABELS[task.estimatedMinutes] : '?'}
-          </button>
-
-          <button
-            onClick={() => onFocus(task.id)}
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: '#fff',
-              background: 'var(--brand)',
-              border: 'none',
-              borderRadius: 5,
-              padding: '2px 8px',
-              cursor: 'pointer',
-            }}
-            title="Start focus session"
-          >
-            Focus
-          </button>
-
-          <button
-            onClick={() => setShowMove(!showMove)}
-            style={{
-              fontSize: 11,
-              color: '#9ca3af',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '2px 4px',
-            }}
-            title="Move to different zone"
-          >
-            ↕
-          </button>
-        </div>
-      )}
-
-      {/* Move popover */}
-      {showMove && (
-        <div style={{
-          position: 'absolute',
-          right: 8,
-          top: '100%',
-          background: '#fff',
-          border: '1px solid var(--border)',
-          borderRadius: 8,
-          padding: 6,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-          zIndex: 50,
-          display: 'flex',
-          gap: 4,
+        {/* Title */}
+        <span style={{
+          flex: 1,
+          fontSize: 14,
+          color: isDone ? 'var(--muted)' : 'var(--text)',
+          textDecoration: isDone ? 'line-through' : 'none',
+          lineHeight: 1.4,
         }}>
-          {(['inbox', 'AM', 'PM', 'Evening'] as BoxSlot[]).filter(s => s !== task.box).map(s => (
+          {task.title}
+        </span>
+
+        {/* Actions (hidden when done) */}
+        {!isDone && (
+          <div style={{ display: 'flex', gap: 4, flexShrink: 0, alignItems: 'center' }}>
+            {/* Scope Lock button */}
+            {scopeState.status === 'idle' && (
+              <button
+                onClick={runScopeCheck}
+                title="Scope check — is this specific enough to start?"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 500,
+                  color: '#9ca3af',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '2px 4px',
+                  lineHeight: 1,
+                }}
+              >
+                ⊛
+              </button>
+            )}
+            {scopeState.status === 'loading' && (
+              <span style={{ fontSize: 11, color: '#9ca3af', padding: '2px 4px', lineHeight: 1 }}>…</span>
+            )}
+            {scopeState.status === 'ok' && (
+              <button
+                onClick={() => setScopeState({ status: 'idle' })}
+                title="Scope looks good — ready to start"
+                style={{ fontSize: 11, color: 'var(--done-color)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px 4px' }}
+              >
+                ✓
+              </button>
+            )}
+            {scopeState.status === 'unavailable' && (
+              <button
+                onClick={() => setScopeState({ status: 'idle' })}
+                title={HAS_API_KEY ? 'Scope check failed' : 'AI scope check needs VITE_ANTHROPIC_API_KEY'}
+                style={{ fontSize: 11, color: '#d1d5db', background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px 4px' }}
+              >
+                ⊛
+              </button>
+            )}
+
             <button
-              key={s}
-              onClick={() => { onMoveTask(task.id, s); setShowMove(false); }}
+              onClick={cycleEstimate}
               style={{
-                padding: '4px 10px',
-                border: '1px solid var(--border)',
-                borderRadius: 6,
-                background: '#fff',
-                fontSize: 12,
+                fontSize: 11,
+                fontWeight: 600,
+                color: task.estimatedMinutes ? 'var(--brand)' : '#9ca3af',
+                background: task.estimatedMinutes ? 'var(--brand-light)' : '#f3f4f6',
+                border: 'none',
+                borderRadius: 5,
+                padding: '2px 6px',
                 cursor: 'pointer',
+                minWidth: 30,
               }}
             >
-              {s === 'inbox' ? 'Inbox' : s}
+              {task.estimatedMinutes ? ESTIMATE_LABELS[task.estimatedMinutes] : '?'}
             </button>
-          ))}
+
+            <button
+              onClick={() => onFocus(task.id)}
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#fff',
+                background: 'var(--brand)',
+                border: 'none',
+                borderRadius: 5,
+                padding: '2px 8px',
+                cursor: 'pointer',
+              }}
+              title="Start focus session"
+            >
+              Focus
+            </button>
+
+            <button
+              onClick={() => setShowMove(!showMove)}
+              style={{
+                fontSize: 11,
+                color: '#9ca3af',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '2px 4px',
+              }}
+              title="Move to different zone"
+            >
+              ↕
+            </button>
+          </div>
+        )}
+
+        {/* Move popover */}
+        {showMove && (
+          <div style={{
+            position: 'absolute',
+            right: 8,
+            top: '100%',
+            background: '#fff',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 6,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+            zIndex: 50,
+            display: 'flex',
+            gap: 4,
+          }}>
+            {(['inbox', 'AM', 'PM', 'Evening'] as BoxSlot[]).filter(s => s !== task.box).map(s => (
+              <button
+                key={s}
+                onClick={() => { onMoveTask(task.id, s); setShowMove(false); }}
+                style={{
+                  padding: '4px 10px',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  background: '#fff',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                }}
+              >
+                {s === 'inbox' ? 'Inbox' : s}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Scope suggestion strip — shown below the task card */}
+      {hasSuggestion && (
+        <div style={{
+          background: '#fffbeb',
+          border: '1px solid #fef3c7',
+          borderTop: 'none',
+          borderRadius: '0 0 8px 8px',
+          padding: '7px 12px 8px 44px',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 6,
+        }}>
+          <span style={{ fontSize: 12, color: '#92400e', flex: 1, lineHeight: 1.4 }}>
+            <strong style={{ fontWeight: 700 }}>Scope tip:</strong>{' '}
+            {(scopeState as { status: 'suggestion'; text: string }).text}
+          </span>
+          <button
+            onClick={() => setScopeState({ status: 'idle' })}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#9ca3af',
+              cursor: 'pointer',
+              fontSize: 14,
+              padding: '0 2px',
+              lineHeight: 1,
+              flexShrink: 0,
+            }}
+            title="Dismiss"
+          >
+            ×
+          </button>
         </div>
       )}
     </div>
@@ -222,16 +333,11 @@ function ZoneCard({
         transition: 'border-color 0.15s',
       }}
     >
-      {/* Zone header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ fontSize: 16 }}>{zone.emoji}</span>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
-            {zone.label}
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--muted)' }}>
-            {zone.time}
-          </div>
+          <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{zone.label}</div>
+          <div style={{ fontSize: 11, color: 'var(--muted)' }}>{zone.time}</div>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
           {open.length > 0 && (
@@ -252,7 +358,6 @@ function ZoneCard({
         </div>
       </div>
 
-      {/* Tasks */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, position: 'relative' }}>
         {tasks.length === 0 && (
           <div style={{
@@ -292,7 +397,6 @@ export default function DayView({
 
   return (
     <div>
-      {/* Date header */}
       <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--text)' }}>{formatted}</div>
@@ -324,7 +428,6 @@ export default function DayView({
         )}
       </div>
 
-      {/* Zone cards */}
       {ZONES.map(zone => (
         <ZoneCard
           key={zone.slot}
@@ -337,7 +440,6 @@ export default function DayView({
         />
       ))}
 
-      {/* Inbox overflow */}
       {inboxTasks.length > 0 && (
         <div style={{
           background: 'var(--surface)',
@@ -363,7 +465,6 @@ export default function DayView({
         </div>
       )}
 
-      {/* Empty state */}
       {tasks.length === 0 && (
         <div style={{
           textAlign: 'center',
