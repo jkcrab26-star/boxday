@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  --brand: #5B6EF5;
+  --brand-dark: #4355d9;
+  --brand-light: #eef0ff;
+  --am-bg: #fffbf0;
+  --am-accent: #f59e0b;
+  --pm-bg: #eff6ff;
+  --pm-accent: #3b82f6;
+  --eve-bg: #f5f3ff;
+  --eve-accent: #8b5cf6;
+  --done-color: #10b981;
+  --surface: #ffffff;
+  --bg: #f8f8fc;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ambient time pulse animation */
+@keyframes pulse-calm {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ambient-calm {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe, #ddd6fe);
+  background-size: 300% 300%;
+  animation: pulse-calm 8s ease infinite;
+}
+
+.ambient-warm {
+  background: linear-gradient(135deg, #fef3c7, #fed7aa, #fecaca);
+  background-size: 300% 300%;
+  animation: pulse-calm 6s ease infinite;
+}
+
+.ambient-urgent {
+  background: linear-gradient(135deg, #fed7aa, #fecaca, #fca5a5);
+  background-size: 300% 300%;
+  animation: pulse-calm 4s ease infinite;
+}
+
+/* Drag and drop active states */
+.dnd-drag-over {
+  outline: 2px dashed var(--brand);
+  outline-offset: -2px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
