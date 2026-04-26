@@ -60,25 +60,21 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
         padding: 32,
       }}
     >
-      {/* Exit */}
-      <button
-        onClick={onExit}
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          background: 'rgba(255,255,255,0.35)',
-          border: 'none',
-          borderRadius: 8,
-          padding: '8px 14px',
-          fontSize: 13,
-          fontWeight: 600,
-          cursor: 'pointer',
-          color: '#374151',
-        }}
-      >
-        ← Back
-      </button>
+      {/* Task context label */}
+      <div style={{
+        position: 'absolute',
+        top: 20,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        fontSize: 12,
+        color: 'rgba(55,65,81,0.6)',
+        fontWeight: 500,
+        letterSpacing: '0.05em',
+        textTransform: 'uppercase',
+      }}>
+        Focus
+      </div>
 
       {/* Task title */}
       <div style={{
@@ -100,7 +96,7 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
       <div style={{
         fontSize: isOvertime ? 48 : 64,
         fontWeight: 800,
-        color: isOvertime ? '#dc2626' : '#111827',
+        color: isOvertime ? '#d97706' : '#111827',
         letterSpacing: '-2px',
         marginBottom: 8,
         fontVariantNumeric: 'tabular-nums',
@@ -108,11 +104,11 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
         {isOvertime ? `+${formatCountdown(elapsed - totalSeconds)}` : formatCountdown(remaining)}
       </div>
       <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 40 }}>
-        {isOvertime ? 'overtime' : `of ${task.estimatedMinutes ?? 30} min`}
+        {isOvertime ? 'still going' : `of ${task.estimatedMinutes ?? 30} min`}
       </div>
 
-      {/* Actions */}
-      <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 360 }}>
+      {/* Primary actions */}
+      <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 360, marginBottom: 14 }}>
         <button
           onClick={() => onSnooze(task.id)}
           style={{
@@ -127,7 +123,7 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
             color: '#374151',
           }}
         >
-          → Snooze 15 min
+          Snooze 15 min
         </button>
         <button
           onClick={() => onDone(task.id)}
@@ -148,6 +144,25 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
         </button>
       </div>
 
+      {/* Exit — shame-neutral, always visible */}
+      <button
+        onClick={onExit}
+        style={{
+          width: '100%',
+          maxWidth: 360,
+          padding: '11px 0',
+          background: 'rgba(255,255,255,0.3)',
+          border: '1px solid rgba(255,255,255,0.5)',
+          borderRadius: 12,
+          fontWeight: 500,
+          fontSize: 14,
+          cursor: 'pointer',
+          color: '#374151',
+        }}
+      >
+        Not now → back to grid
+      </button>
+
       {/* Progress bar */}
       <div style={{
         position: 'absolute',
@@ -159,7 +174,7 @@ export default function FocusMode({ task, onDone, onSnooze, onExit }: FocusModeP
       }}>
         <div style={{
           height: '100%',
-          background: isOvertime ? '#dc2626' : '#10b981',
+          background: isOvertime ? '#d97706' : '#10b981',
           width: `${Math.min(100, (elapsed / totalSeconds) * 100)}%`,
           transition: 'width 1s linear',
         }} />
