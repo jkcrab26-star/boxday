@@ -7,6 +7,7 @@ import BrainDump from './components/BrainDump';
 import DayView from './components/DayView';
 import ReflectionPrompt from './components/ReflectionPrompt';
 import UpgradeModal from './components/UpgradeModal';
+import FocusMode from './components/FocusMode';
 
 function generateId(): string {
   return crypto.randomUUID();
@@ -36,8 +37,19 @@ export default function App() {
   const [view, setView] = useState<View>('dump');
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [isBoxing, setIsBoxing] = useState(false);
+  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
 
   useEffect(() => { saveState(state); }, [state]);
+
+  // Handle Stripe success redirect: ?pro=1 in URL activates Pro
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('pro') === '1') {
+      setState(prev => ({ ...prev, isPro: true }));
+      // Clean the URL so refreshing doesn't re-trigger
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-reset: if last reset wasn't today, move yesterday's open tasks back to inbox
   useEffect(() => {
@@ -128,11 +140,21 @@ export default function App() {
     setView('day');
   }, []);
 
+  const snoozeTask = useCallback((id: string) => {
+    setFocusTaskId(null);
+    // Move to end of its current box — just mark snoozed for now, user can re-box
+    setState(prev => ({
+      ...prev,
+      tasks: prev.tasks.map(t => t.id === id ? { ...t, box: 'inbox' as const } : t),
+    }));
+  }, []);
+
   const activatePro = useCallback(() => {
     setState(prev => ({ ...prev, isPro: true }));
     setShowUpgrade(false);
   }, []);
 
+  const focusTask = focusTaskId ? state.tasks.find(t => t.id === focusTaskId) : null;
   const todayTasks = state.tasks.filter(t => t.status === 'open' || t.completedAt?.startsWith(todayISO()));
   const inboxTasks = state.tasks.filter(t => t.box === 'inbox' && t.status === 'open');
   const todayReflection = state.reflections.find(r => r.date === todayISO());
@@ -175,6 +197,7 @@ export default function App() {
             todayReflection={todayReflection}
             isPro={state.isPro}
             onUpgradeClick={() => setShowUpgrade(true)}
+            onFocusTask={setFocusTaskId}
           />
         )}
 
@@ -191,6 +214,15 @@ export default function App() {
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
           onActivatePro={activatePro}
+        />
+      )}
+
+      {focusTask && (
+        <FocusMode
+          task={focusTask}
+          onDone={(id) => { completeTask(id); setFocusTaskId(null); }}
+          onSnooze={snoozeTask}
+          onExit={() => setFocusTaskId(null)}
         />
       )}
     </div>

@@ -20,15 +20,17 @@ interface DayViewProps {
   todayReflection: DailyReflection | undefined;
   isPro: boolean;
   onUpgradeClick: () => void;
+  onFocusTask: (id: string) => void;
 }
 
 function TaskCard({
-  task, onComplete, onMoveTask, onSetEstimate
+  task, onComplete, onMoveTask, onSetEstimate, onFocus
 }: {
   task: Task;
   onComplete: (id: string) => void;
   onMoveTask: (id: string, box: BoxSlot) => void;
   onSetEstimate: (id: string, minutes: number) => void;
+  onFocus: (id: string) => void;
 }) {
   const [showMove, setShowMove] = useState(false);
 
@@ -114,6 +116,23 @@ function TaskCard({
           </button>
 
           <button
+            onClick={() => onFocus(task.id)}
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: '#fff',
+              background: 'var(--brand)',
+              border: 'none',
+              borderRadius: 5,
+              padding: '2px 8px',
+              cursor: 'pointer',
+            }}
+            title="Start focus session"
+          >
+            Focus
+          </button>
+
+          <button
             onClick={() => setShowMove(!showMove)}
             style={{
               fontSize: 11,
@@ -168,13 +187,14 @@ function TaskCard({
 }
 
 function ZoneCard({
-  zone, tasks, onComplete, onMoveTask, onSetEstimate
+  zone, tasks, onComplete, onMoveTask, onSetEstimate, onFocus
 }: {
   zone: typeof ZONES[0];
   tasks: Task[];
   onComplete: (id: string) => void;
   onMoveTask: (id: string, box: BoxSlot) => void;
   onSetEstimate: (id: string, minutes: number) => void;
+  onFocus: (id: string) => void;
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const open = tasks.filter(t => t.status === 'open');
@@ -251,6 +271,7 @@ function ZoneCard({
             onComplete={onComplete}
             onMoveTask={onMoveTask}
             onSetEstimate={onSetEstimate}
+            onFocus={onFocus}
           />
         ))}
       </div>
@@ -259,7 +280,7 @@ function ZoneCard({
 }
 
 export default function DayView({
-  tasks, onComplete, onMoveTask, onSetEstimate, onStartReflect, todayReflection,
+  tasks, onComplete, onMoveTask, onSetEstimate, onStartReflect, todayReflection, onFocusTask,
 }: DayViewProps) {
   const today = todayISO();
   const formatted = new Date(today + 'T00:00:00').toLocaleDateString('en-US', {
@@ -312,6 +333,7 @@ export default function DayView({
           onComplete={onComplete}
           onMoveTask={onMoveTask}
           onSetEstimate={onSetEstimate}
+          onFocus={onFocusTask}
         />
       ))}
 
@@ -334,6 +356,7 @@ export default function DayView({
                 onComplete={onComplete}
                 onMoveTask={onMoveTask}
                 onSetEstimate={onSetEstimate}
+                onFocus={onFocusTask}
               />
             ))}
           </div>
