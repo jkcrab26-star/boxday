@@ -9,8 +9,14 @@ import ReflectionPrompt from './components/ReflectionPrompt';
 import UpgradeModal from './components/UpgradeModal';
 import FocusMode from './components/FocusMode';
 
+const FREE_TASKS_PER_BOX = 5;
+
 function generateId(): string {
   return crypto.randomUUID();
+}
+
+function boxTaskCount(tasks: AppState['tasks'], box: import('./types').BoxSlot): number {
+  return tasks.filter(t => t.box === box && t.status === 'open').length;
 }
 
 function updateStreak(state: AppState): AppState {
@@ -95,10 +101,17 @@ export default function App() {
   }, []);
 
   const moveTask = useCallback((id: string, toBox: BoxSlot) => {
-    setState(prev => ({
-      ...prev,
-      tasks: prev.tasks.map(t => t.id === id ? { ...t, box: toBox } : t),
-    }));
+    setState(prev => {
+      if (!prev.isPro && toBox !== 'inbox') {
+        const count = boxTaskCount(prev.tasks, toBox);
+        if (count >= FREE_TASKS_PER_BOX) {
+          // Trigger upgrade modal after state update — use a deferred call
+          setTimeout(() => setShowUpgrade(true), 0);
+          return prev;
+        }
+      }
+      return { ...prev, tasks: prev.tasks.map(t => t.id === id ? { ...t, box: toBox } : t) };
+    });
   }, []);
 
   const setEstimate = useCallback((id: string, minutes: number) => {
@@ -114,13 +127,28 @@ export default function App() {
     setIsBoxing(true);
     try {
       const results = await aiBoxTasks(inbox);
-      setState(prev => ({
-        ...prev,
-        tasks: prev.tasks.map(t => {
+      setState(prev => {
+        // Track how many have been assigned per box this session to respect free limit
+        const boxCounts: Record<string, number> = {
+          AM: boxTaskCount(prev.tasks, 'AM'),
+          PM: boxTaskCount(prev.tasks, 'PM'),
+          Evening: boxTaskCount(prev.tasks, 'Evening'),
+        };
+        const updatedTasks = prev.tasks.map(t => {
           const r = results.find(r => r.id === t.id);
-          return r ? { ...t, box: r.box, estimatedMinutes: r.estimatedMinutes } : t;
-        }),
-      }));
+          if (!r) return t;
+          const slot = r.box;
+          if (!prev.isPro && slot !== 'inbox') {
+            if ((boxCounts[slot] ?? 0) >= FREE_TASKS_PER_BOX) {
+              // Box is full for free tier — leave in inbox
+              return t;
+            }
+            boxCounts[slot] = (boxCounts[slot] ?? 0) + 1;
+          }
+          return { ...t, box: slot, estimatedMinutes: r.estimatedMinutes };
+        });
+        return { ...prev, tasks: updatedTasks };
+      });
       setView('day');
     } finally {
       setIsBoxing(false);

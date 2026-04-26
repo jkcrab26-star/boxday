@@ -3,6 +3,11 @@ import type { Task, BoxSlot } from '../types';
 
 const ESTIMATES = [15, 30, 60, 90];
 const ESTIMATE_LABELS: Record<number, string> = { 15: '15m', 30: '30m', 60: '1h', 90: '90m' };
+const FREE_TASKS_PER_BOX = 5;
+
+function boxCount(allTasks: Task[], box: BoxSlot): number {
+  return allTasks.filter(t => t.box === box && t.status === 'open').length;
+}
 
 interface BrainDumpProps {
   tasks: Task[];
@@ -226,9 +231,14 @@ export default function BrainDump({
                 }}
               >
                 <option value="">Box →</option>
-                <option value="AM">AM</option>
-                <option value="PM">PM</option>
-                <option value="Evening">Evening</option>
+                {(['AM', 'PM', 'Evening'] as BoxSlot[]).map(slot => {
+                  const full = !isPro && boxCount(allTasks, slot) >= FREE_TASKS_PER_BOX;
+                  return (
+                    <option key={slot} value={slot}>
+                      {slot}{full ? ' (full)' : ''}
+                    </option>
+                  );
+                })}
               </select>
 
               {/* Delete */}
