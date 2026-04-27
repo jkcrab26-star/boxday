@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../store'
 
 export function FocusMode() {
-  const { tasks, focusSession, completeTask, snoozeTask, dismissTask, settings } = useStore()
+  const { tasks, focusSession, completeTask, snoozeTask, dismissTask, settings, lastEarnedCoins, clearEarnedCoins } = useStore()
   const session = focusSession!
   const task = tasks.find(t => t.id === session.taskId)
 
   const [elapsed, setElapsed] = useState(0)
+  const [showCoinPop, setShowCoinPop] = useState(false)
+  const [celebCoins, setCelebCoins] = useState(0)
+
   const totalMs = session.durationMs
   const remainingMs = Math.max(0, totalMs - elapsed)
-
-  // Pulse duration in seconds for CSS animation
   const pulseDurationSec = Math.max(30, Math.floor(totalMs / 1000))
 
   useEffect(() => {
@@ -19,6 +20,16 @@ export function FocusMode() {
     }, 1000)
     return () => clearInterval(interval)
   }, [session.startedAt])
+
+  // Show coin pop when earned after completing this task
+  useEffect(() => {
+    if (lastEarnedCoins && lastEarnedCoins > 0) {
+      setCelebCoins(lastEarnedCoins)
+      setShowCoinPop(true)
+      const t = setTimeout(() => { setShowCoinPop(false); clearEarnedCoins() }, 2200)
+      return () => clearTimeout(t)
+    }
+  }, [lastEarnedCoins])
 
   if (!task) return null
 
@@ -29,7 +40,16 @@ export function FocusMode() {
       className={`${settings.ambientPulse ? 'ambient-pulse' : 'bg-[#f0f4ff]'} fixed inset-0 flex flex-col items-center justify-center z-50 px-6`}
       style={settings.ambientPulse ? { '--pulse-duration': `${pulseDurationSec}s` } as React.CSSProperties : undefined}
     >
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative">
+        {/* Coin celebration pop — anchored above timer */}
+        {showCoinPop && (
+          <div className="coin-pop absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none text-center">
+            <span className="text-3xl font-bold text-yellow-500 drop-shadow-md">
+              +{celebCoins} 🪙
+            </span>
+          </div>
+        )}
+
         {/* Timer */}
         <div className="text-center mb-8">
           <p className={`text-7xl font-mono font-light mb-2 ${isOvertime ? 'text-orange-600' : 'text-gray-800'}`}>
@@ -50,7 +70,7 @@ export function FocusMode() {
         {/* Actions */}
         <div className="flex flex-col gap-3">
           <button
-            onClick={() => completeTask(task.id)}
+            onClick={() => completeTask(task.id, true)}
             className="w-full py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-semibold text-lg transition-colors"
           >
             ✓ Done
