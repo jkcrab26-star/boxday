@@ -15,14 +15,14 @@ export interface CoinLedger {
   todayEarned: number
 }
 
-// Earn rates per Toshi Phase-0 spec
+// Earn rates per MKG-198 spec
 export const EARN_RATES = {
-  task: 1,
-  box: 3,
-  day_first: 10,
+  task: 10,      // base: complete any task
+  box: 5,        // bonus: complete via Focus Mode timer
+  day_first: 0,  // reserved — not active in v0
 } as const
 
-export const DAILY_CAP = 50
+export const DAILY_CAP = 200
 
 const COINS_KEY = 'boxday_coins'
 
@@ -48,7 +48,6 @@ export function earnCoins(
   taskTitle: string,
   viaFocus: boolean,
   todayDate: string,
-  completedCountToday: number  // tasks completed today BEFORE this one
 ): { ledger: CoinLedger; earned: number } {
   // Reset daily counter on new day
   const base: CoinLedger = ledger.todayDate === todayDate
@@ -61,17 +60,17 @@ export function earnCoins(
   const newTxns: CoinTransaction[] = []
   let totalEarned = 0
 
-  const baseType: CoinTxType = viaFocus ? 'box' : 'task'
-  const baseAmount = Math.min(EARN_RATES[baseType], remaining)
-  if (baseAmount > 0) {
-    newTxns.push({ id: nanoid(), type: baseType, amount: baseAmount, taskTitle, earnedAt: new Date().toISOString() })
-    totalEarned += baseAmount
+  // Base: +10 for any completed task
+  const taskAmount = Math.min(EARN_RATES.task, remaining)
+  if (taskAmount > 0) {
+    newTxns.push({ id: nanoid(), type: 'task', amount: taskAmount, taskTitle, earnedAt: new Date().toISOString() })
+    totalEarned += taskAmount
   }
 
-  // First completion of the day bonus
-  if (completedCountToday === 0 && remaining - totalEarned >= EARN_RATES.day_first) {
-    newTxns.push({ id: nanoid(), type: 'day_first', amount: EARN_RATES.day_first, taskTitle, earnedAt: new Date().toISOString() })
-    totalEarned += EARN_RATES.day_first
+  // Focus bonus: +5 extra if completed within Focus Mode timer
+  if (viaFocus && remaining - totalEarned >= EARN_RATES.box) {
+    newTxns.push({ id: nanoid(), type: 'box', amount: EARN_RATES.box, taskTitle, earnedAt: new Date().toISOString() })
+    totalEarned += EARN_RATES.box
   }
 
   const newLedger: CoinLedger = {

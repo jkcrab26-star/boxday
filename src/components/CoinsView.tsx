@@ -4,8 +4,8 @@ import { EARN_RATES, DAILY_CAP } from '../lib/coins'
 
 const TX_LABELS: Record<string, string> = {
   task: `+${EARN_RATES.task} — task complete`,
-  box: `+${EARN_RATES.box} — focus box complete`,
-  day_first: `+${EARN_RATES.day_first} — first completion today`,
+  box: `+${EARN_RATES.box} — focus bonus`,
+  day_first: `+${EARN_RATES.day_first} — first of day`,
 }
 
 export function CoinsView() {
@@ -34,9 +34,8 @@ export function CoinsView() {
       <div className="bg-indigo-50 dark:bg-indigo-950 rounded-xl p-4 mb-6 text-sm">
         <p className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">How to earn</p>
         <ul className="space-y-1 text-indigo-700 dark:text-indigo-300 text-xs">
-          <li>▶ Start a focus block → complete it: <strong>+3 coins</strong></li>
-          <li>✓ Complete any task: <strong>+1 coin</strong></li>
-          <li>☀️ First completion of the day: <strong>+10 bonus</strong></li>
+          <li>✓ Complete any task: <strong>+{EARN_RATES.task} coins</strong></li>
+          <li>▶ Complete via Focus Mode: <strong>+{EARN_RATES.box} bonus coins</strong> (= +{EARN_RATES.task + EARN_RATES.box} total)</li>
           <li>⚡ Daily cap: <strong>{DAILY_CAP} coins</strong> (keeps it healthy)</li>
         </ul>
       </div>

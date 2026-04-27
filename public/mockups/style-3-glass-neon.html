@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80HD — Style 3: Glass / Neon (Crypto-native)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #08080f; color: #e0e0ff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  /* Background glow */
+  body::before { content: ''; position: fixed; top: -200px; left: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(138,43,226,0.15) 0%, transparent 70%); pointer-events: none; }
+  body::after { content: ''; position: fixed; bottom: -150px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,255,200,0.08) 0%, transparent 70%); pointer-events: none; }
+
+  .app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; }
+  .nav-brand { font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #a855f7, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.02em; }
+  .coins-pill { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: #c084fc; display: flex; align-items: center; gap: 5px; }
+  .coin-dot { width: 8px; height: 8px; background: #c084fc; border-radius: 50%; box-shadow: 0 0 6px #c084fc; }
+
+  /* Header */
+  .header { padding: 8px 20px 20px; }
+  .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; color: #fff; }
+  .header p { font-size: 13px; color: #555; margin-top: 3px; }
+
+  /* Must do */
+  .must-do { margin: 0 16px 16px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 12px 14px; position: relative; overflow: hidden; }
+  .must-do::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(239,68,68,0.6), transparent); }
+  .must-do-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #ef4444; font-weight: 700; margin-bottom: 5px; }
+  .must-do-task { font-size: 14px; font-weight: 600; color: #fca5a5; }
+
+  /* Buckets */
+  .buckets { flex: 1; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 18px; }
+  .bucket-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #333; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .bucket-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #222, transparent); }
+
+  .task-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px 14px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 10px; }
+  .task-card:hover { background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.3); box-shadow: 0 0 20px rgba(168,85,247,0.1); }
+  .task-card.done { opacity: 0.35; }
+  .task-card.done .task-title { text-decoration: line-through; }
+
+  .task-check { width: 20px; height: 20px; border: 1.5px solid #333; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .task-check.done { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #06b6d4; box-shadow: 0 0 8px rgba(6,182,212,0.3); }
+  .task-body { flex: 1; }
+  .task-title { font-size: 14px; font-weight: 500; color: #d0d0e8; }
+  .task-sub { font-size: 11px; color: #333; margin-top: 3px; }
+  .task-reward { font-size: 11px; color: #c084fc; font-weight: 600; white-space: nowrap; }
+
+  /* Focus CTA */
+  .focus-cta { padding: 0 16px 16px; }
+  .focus-btn { width: 100%; background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(168,85,247,0.5); color: #fff; font-size: 15px; font-weight: 700; padding: 15px; border-radius: 12px; cursor: pointer; letter-spacing: 0.02em; position: relative; overflow: hidden; }
+  .focus-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(6,182,212,0.1)); opacity: 0; transition: opacity 0.2s; }
+  .focus-btn:hover::before { opacity: 1; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; border-top: 1px solid rgba(255,255,255,0.05); padding: 10px 0 24px; background: rgba(8,8,15,0.8); backdrop-filter: blur(20px); }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; cursor: pointer; }
+  .tab-icon { font-size: 18px; filter: grayscale(0.5); }
+  .tab-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: #333; }
+  .tab.active .tab-label { color: #c084fc; }
+  .tab.active .tab-icon { filter: none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <div class="nav-brand">80HD</div>
+    <div class="coins-pill"><span class="coin-dot"></span> 840 $80HD</div>
+  </div>
+
+  <div class="header">
+    <h1>Today</h1>
+    <p>Sunday · Apr 27 · 3 remaining</p>
+  </div>
+
+  <div class="must-do">
+    <div class="must-do-label">⚡ Priority Lock</div>
+    <div class="must-do-task">File quarterly tax estimate · 2h</div>
+  </div>
+
+  <div class="buckets">
+    <div>
+      <div class="bucket-label">Morning</div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body"><div class="task-title">Review pitch deck slides</div><div class="task-sub">45 min</div></div>
+        <div class="task-reward">+30</div>
+      </div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body"><div class="task-title">Email Marcus about funding</div><div class="task-sub">20 min</div></div>
+        <div class="task-reward">+20</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">File quarterly tax estimate</div><div class="task-sub">2 hr · priority lock</div></div>
+        <div class="task-reward">+80</div>
+      </div>
+    </div>
+    <div>
+      <div class="bucket-label">Afternoon</div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">Ship BoxDay landing page copy</div><div class="task-sub">1 hr</div></div>
+        <div class="task-reward">+50</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">Record TikTok intro clip</div><div class="task-sub">30 min</div></div>
+        <div class="task-reward">+30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-cta">
+    <button class="focus-btn">▶ ENTER FOCUS MODE</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active"><span class="tab-icon">◻</span><span class="tab-label">Today</span></div>
+    <div class="tab"><span class="tab-icon">📅</span><span class="tab-label">Week</span></div>
+    <div class="tab"><span class="tab-icon">📆</span><span class="tab-label">Month</span></div>
+    <div class="tab"><span class="tab-icon">🧠</span><span class="tab-label">Dump</span></div>
+    <div class="tab"><span class="tab-icon">🪙</span><span class="tab-label">Tokens</span></div>
+  </div>
+</div>
+</body>
+</html>

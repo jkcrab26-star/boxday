@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# BoxDay
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Box your day. Build your brain.**
 
-Currently, two official plugins are available:
+ADHD-native daily todo app built around brain-boxing — the dump → box → execute loop that works with ADHD instead of against it.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does
 
-## React Compiler
+1. **Brain dump** — capture everything from working memory, no friction, no judgment
+2. **AI brain-boxing** — one batched AI call assigns each dump item to AM / PM / Evening and estimates time
+3. **Today view** — three color-coded time boxes, drag-to-reschedule, tap to complete
+4. **Focus Mode** — fullscreen countdown with ambient time pulse (CSS gradient shifts calm → warm → coral as time elapses)
+5. **Daily reflection** — three questions at end of day, shame-neutral framing throughout
+6. **Streak counter** — tracks days with at least one completed task
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Pricing
 
-## Expanding the ESLint configuration
+| Tier | Price |
+|------|-------|
+| Free | Brain dump + manual boxing (5 tasks/box limit) |
+| Pro Monthly | $9/mo |
+| Pro Annual | $79/yr (~$6.60/mo, save 27%) |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Pro unlocks AI boxing, unlimited tasks, and streak tracking.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Dev setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.local.example .env.local   # fill in keys
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variable | Description |
+|----------|-------------|
+| `VITE_ANTHROPIC_API_KEY` | Anthropic API key for AI brain-boxing (Claude Haiku). Falls back to round-robin if not set. |
+| `VITE_STRIPE_MONTHLY_LINK` | Stripe Payment Link URL for $9/mo plan |
+| `VITE_STRIPE_ANNUAL_LINK` | Stripe Payment Link URL for $79/yr plan |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Stripe setup
+
+Create two Payment Links in the Stripe dashboard. Under **After payment**, set the redirect URL to `{your-app-url}?pro=1` — this activates Pro client-side after checkout.
+
+## Deploy (Vercel)
+
+```bash
+# From Vercel dashboard: import jkcrab26-star/boxday from GitHub
+# Framework: Vite (auto-detected)
+# Add env vars above, then deploy
 ```
+
+`vercel.json` already configures SPA routing rewrites.
+
+## Stack
+
+- Vite + React 18 + TypeScript (strict)
+- Tailwind CSS v4 (via `@tailwindcss/vite`)
+- localStorage persistence — no backend, no auth for v0
+- Claude Haiku for AI brain-boxing (batched, one round-trip per session)
+- HTML5 drag-and-drop for zone reschedule
+
+## Shame-neutral design (non-negotiable)
+
+Every user-facing string avoids "overdue", "missed", "behind", "failed". Incomplete tasks silently return to the brain dump on daily reset (4am). No task completion ratios. No history of what you didn't finish.
+
+## v0 scope cuts (explicit)
+
+No recurring tasks, no calendar sync, no mobile app, no multi-day planning, no sharing, no dark mode, no push notifications.

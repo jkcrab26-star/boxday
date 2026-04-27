@@ -151,16 +151,12 @@ export const useStore = create<State>((set, get) => ({
     if (!task) return
 
     const today = getDayBoundaryDate()
-    const completedCountToday = tasks.filter(
-      t => t.status === 'done' && t.completedAt?.startsWith(today)
-    ).length
 
     const { ledger: newLedger, earned } = earnCoins(
       coins,
       task.title,
       viaFocus,
       today,
-      completedCountToday
     )
 
     const updatedTasks = tasks.map(t =>

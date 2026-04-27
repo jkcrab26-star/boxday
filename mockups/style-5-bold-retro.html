@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80HD — Style 5: Bold Retro (80s/ADHD energy)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a0533; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif; min-height: 100vh; }
+
+  .app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; background: #1a0533; }
+  .nav-brand { font-size: 22px; font-weight: 900; letter-spacing: -0.03em; }
+  .nav-brand .eight { color: #ff6bff; }
+  .nav-brand .zero { color: #00ffcc; }
+  .nav-brand .hd { color: #fff; }
+  .coins-pill { background: #ff6bff; color: #1a0533; font-size: 12px; font-weight: 900; padding: 5px 12px; border-radius: 4px; letter-spacing: 0.02em; }
+
+  /* Hero strip */
+  .hero { background: linear-gradient(135deg, #ff6bff 0%, #7c3aed 50%, #00ffcc 100%); padding: 18px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+  .hero-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.8; margin-bottom: 4px; }
+  .hero h1 { font-size: 36px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; text-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+  .hero-sub { font-size: 13px; font-weight: 600; opacity: 0.85; margin-top: 4px; }
+
+  /* Must do — bold callout box */
+  .must-do { margin: 14px 14px 0; background: #ff6bff; padding: 12px 14px; border-radius: 6px; box-shadow: 4px 4px 0 #00ffcc; }
+  .must-do-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: #1a0533; margin-bottom: 4px; }
+  .must-do-task { font-size: 15px; font-weight: 800; color: #1a0533; }
+  .must-do-time { font-size: 11px; font-weight: 700; color: rgba(26,5,51,0.7); margin-top: 3px; }
+
+  /* Buckets */
+  .buckets { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+  .bucket-head { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; color: #00ffcc; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .bucket-head::after { content: ''; flex: 1; height: 1px; background: rgba(0,255,204,0.3); }
+
+  .task-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 11px 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
+  .task-card:hover { border-color: #ff6bff; background: rgba(255,107,255,0.08); transform: translateX(2px); }
+  .task-card.done { opacity: 0.3; }
+  .task-card.done .task-title { text-decoration: line-through; }
+
+  .task-check { width: 22px; height: 22px; border: 2.5px solid rgba(255,255,255,0.2); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; }
+  .task-check.done { background: #00ffcc; border-color: #00ffcc; color: #1a0533; }
+  .task-body { flex: 1; }
+  .task-title { font-size: 14px; font-weight: 700; color: #fff; }
+  .task-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; font-weight: 600; }
+  .task-reward { font-size: 12px; font-weight: 900; color: #00ffcc; white-space: nowrap; }
+
+  /* Focus CTA */
+  .focus-cta { padding: 0 14px 14px; }
+  .focus-btn { width: 100%; background: #ff6bff; color: #1a0533; font-size: 16px; font-weight: 900; padding: 15px; border: none; border-radius: 6px; cursor: pointer; letter-spacing: 0.03em; text-transform: uppercase; box-shadow: 4px 4px 0 #00ffcc; transition: all 0.15s; }
+  .focus-btn:hover { box-shadow: 2px 2px 0 #00ffcc; transform: translate(2px, 2px); }
+
+  /* Tab bar */
+  .tab-bar { display: flex; background: #0f0222; border-top: 2px solid rgba(255,107,255,0.2); padding: 8px 0 22px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px; cursor: pointer; }
+  .tab-icon { font-size: 18px; }
+  .tab-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.2); }
+  .tab.active .tab-label { color: #ff6bff; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <div class="nav-brand"><span class="eight">8</span><span class="zero">0</span><span class="hd">HD</span></div>
+    <div class="coins-pill">840 COINS</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-date">Sunday · Apr 27</div>
+    <h1>Today</h1>
+    <div class="hero-sub">3 tasks left · 2 crushed 💥</div>
+  </div>
+
+  <div class="must-do">
+    <div class="must-do-label">⚡ Must Do Today</div>
+    <div class="must-do-task">File quarterly tax estimate</div>
+    <div class="must-do-time">2 hours · Morning</div>
+  </div>
+
+  <div class="buckets">
+    <div>
+      <div class="bucket-head">Morning</div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body"><div class="task-title">Review pitch deck slides</div><div class="task-sub">45 min</div></div>
+        <div class="task-reward">+30</div>
+      </div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body"><div class="task-title">Email Marcus about funding</div><div class="task-sub">20 min</div></div>
+        <div class="task-reward">+20</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">File quarterly tax estimate</div><div class="task-sub">2 hr · MUST DO</div></div>
+        <div class="task-reward">+80</div>
+      </div>
+    </div>
+    <div>
+      <div class="bucket-head">Afternoon</div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">Ship BoxDay landing page copy</div><div class="task-sub">1 hr</div></div>
+        <div class="task-reward">+50</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body"><div class="task-title">Record TikTok intro clip</div><div class="task-sub">30 min</div></div>
+        <div class="task-reward">+30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-cta">
+    <button class="focus-btn">▶ START FOCUS MODE</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active"><span class="tab-icon">◻</span><span class="tab-label">Today</span></div>
+    <div class="tab"><span class="tab-icon">📅</span><span class="tab-label">Week</span></div>
+    <div class="tab"><span class="tab-icon">📆</span><span class="tab-label">Month</span></div>
+    <div class="tab"><span class="tab-icon">🧠</span><span class="tab-label">Dump</span></div>
+    <div class="tab"><span class="tab-icon">🪙</span><span class="tab-label">Coins</span></div>
+  </div>
+</div>
+</body>
+</html>

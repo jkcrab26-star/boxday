@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80HD — Style 4: Soft Pastel (Notion-meets-Calm)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f7f5f2; color: #2d2a26; font-family: 'Georgia', 'Times New Roman', serif; min-height: 100vh; }
+  .sans { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+  .app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px 10px; }
+  .nav-date { font-family: -apple-system, sans-serif; font-size: 12px; color: #b5aea4; letter-spacing: 0.06em; text-transform: uppercase; }
+  .coins-pill { font-family: -apple-system, sans-serif; background: #fef9ec; border: 1.5px solid #f0d98a; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #9a7c3e; }
+
+  /* Header */
+  .header { padding: 8px 22px 18px; border-bottom: 1px solid #ece8e2; }
+  .header h1 { font-size: 32px; font-weight: 400; letter-spacing: -0.02em; color: #1a1714; line-height: 1.2; }
+  .header-sub { font-family: -apple-system, sans-serif; font-size: 12px; color: #b5aea4; margin-top: 6px; }
+
+  /* Must do */
+  .must-do { margin: 18px 22px 0; background: #fdf4f4; border-left: 3px solid #e8a09a; border-radius: 0 8px 8px 0; padding: 12px 14px; }
+  .must-do-label { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #c4776e; font-weight: 600; margin-bottom: 5px; }
+  .must-do-task { font-size: 15px; color: #2d2a26; }
+  .must-do-time { font-family: -apple-system, sans-serif; font-size: 11px; color: #b5aea4; margin-top: 3px; }
+
+  /* Buckets */
+  .buckets { flex: 1; padding: 18px 22px 16px; display: flex; flex-direction: column; gap: 20px; }
+  .bucket-label { font-family: -apple-system, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #b5aea4; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .bucket-dot-am { width: 6px; height: 6px; border-radius: 50%; background: #f9c74f; }
+  .bucket-dot-pm { width: 6px; height: 6px; border-radius: 50%; background: #90be6d; }
+
+  .task-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #ece8e2; cursor: pointer; }
+  .task-row:last-child { border-bottom: none; }
+  .task-check { width: 18px; height: 18px; border: 1.5px solid #d4cec8; border-radius: 4px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #90be6d; }
+  .task-check.done { background: #f0f8f0; border-color: #90be6d; }
+  .task-body { flex: 1; }
+  .task-title { font-size: 15px; color: #2d2a26; line-height: 1.4; }
+  .task-row.done .task-title { text-decoration: line-through; color: #b5aea4; }
+  .task-meta { font-family: -apple-system, sans-serif; font-size: 11px; color: #c5bfba; margin-top: 2px; display: flex; gap: 8px; }
+  .task-coins { color: #c4a85a; }
+
+  /* Focus CTA */
+  .focus-cta { padding: 0 22px 16px; }
+  .focus-btn { width: 100%; background: #2d2a26; color: #f7f5f2; font-family: -apple-system, sans-serif; font-size: 14px; font-weight: 600; padding: 14px; border: none; border-radius: 10px; cursor: pointer; letter-spacing: 0.02em; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; border-top: 1px solid #ece8e2; padding: 10px 0 24px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px; cursor: pointer; }
+  .tab-icon { font-size: 17px; }
+  .tab-label { font-family: -apple-system, sans-serif; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; color: #c5bfba; }
+  .tab.active .tab-label { color: #2d2a26; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <span class="nav-date">Sunday, Apr 27</span>
+    <div class="coins-pill">840 coins</div>
+  </div>
+
+  <div class="header">
+    <h1>Today</h1>
+    <div class="header-sub sans">3 tasks left · you're doing well</div>
+  </div>
+
+  <div class="must-do">
+    <div class="must-do-label">Must do today</div>
+    <div class="must-do-task">File quarterly tax estimate</div>
+    <div class="must-do-time sans">2 hours · morning block</div>
+  </div>
+
+  <div class="buckets">
+    <div>
+      <div class="bucket-label"><span class="bucket-dot-am"></span> Morning</div>
+      <div class="task-row done">
+        <div class="task-check done">✓</div>
+        <div class="task-body">
+          <div class="task-title">Review pitch deck slides</div>
+          <div class="task-meta"><span>45 min</span><span class="task-coins">+30 coins</span></div>
+        </div>
+      </div>
+      <div class="task-row done">
+        <div class="task-check done">✓</div>
+        <div class="task-body">
+          <div class="task-title">Email Marcus about funding</div>
+          <div class="task-meta"><span>20 min</span><span class="task-coins">+20 coins</span></div>
+        </div>
+      </div>
+      <div class="task-row">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">File quarterly tax estimate</div>
+          <div class="task-meta"><span>2 hr</span><span class="task-coins">+80 coins</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="bucket-label"><span class="bucket-dot-pm"></span> Afternoon</div>
+      <div class="task-row">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">Ship BoxDay landing page copy</div>
+          <div class="task-meta"><span>1 hr</span><span class="task-coins">+50 coins</span></div>
+        </div>
+      </div>
+      <div class="task-row">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">Record TikTok intro clip</div>
+          <div class="task-meta"><span>30 min</span><span class="task-coins">+30 coins</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-cta">
+    <button class="focus-btn">Begin Focus Mode →</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active"><span class="tab-icon">◻</span><span class="tab-label">Today</span></div>
+    <div class="tab"><span class="tab-icon">📅</span><span class="tab-label">Week</span></div>
+    <div class="tab"><span class="tab-icon">📆</span><span class="tab-label">Month</span></div>
+    <div class="tab"><span class="tab-icon">🧠</span><span class="tab-label">Dump</span></div>
+    <div class="tab"><span class="tab-icon">🪙</span><span class="tab-label">Coins</span></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80HD — Style 1: Dark Minimal (Linear-inspired)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; color: #e8e8e8; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; min-height: 100vh; }
+
+  .app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #1e1e1e; }
+  .nav-date { font-size: 13px; color: #555; letter-spacing: 0.05em; text-transform: uppercase; }
+  .nav-coins { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #f5c542; font-weight: 600; }
+  .coin-icon { width: 16px; height: 16px; background: #f5c542; border-radius: 50%; display: inline-block; }
+
+  /* Header */
+  .header { padding: 24px 20px 12px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: #fff; }
+  .header p { font-size: 13px; color: #555; margin-top: 4px; }
+
+  /* Priority badge */
+  .must-do-bar { margin: 0 20px 20px; background: #1a1a1a; border: 1px solid #2a2a2a; border-left: 3px solid #e74c3c; border-radius: 8px; padding: 12px 14px; }
+  .must-do-bar .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #e74c3c; font-weight: 700; margin-bottom: 6px; }
+  .must-do-task { font-size: 14px; font-weight: 500; color: #fff; }
+  .must-do-task span { color: #555; font-size: 12px; margin-left: 8px; }
+
+  /* Buckets */
+  .buckets { flex: 1; padding: 0 20px 20px; display: flex; flex-direction: column; gap: 20px; }
+  .bucket-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #444; font-weight: 700; margin-bottom: 8px; }
+  .task-card { background: #141414; border: 1px solid #222; border-radius: 8px; padding: 12px 14px; margin-bottom: 6px; cursor: pointer; transition: border-color 0.15s; }
+  .task-card:hover { border-color: #444; }
+  .task-card.done { opacity: 0.4; }
+  .task-card.done .task-title { text-decoration: line-through; }
+  .task-title { font-size: 14px; font-weight: 500; color: #e8e8e8; }
+  .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+  .task-time { font-size: 11px; color: #444; }
+  .task-coins { font-size: 11px; color: #f5c542; }
+  .check { width: 16px; height: 16px; border: 1.5px solid #333; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; float: right; margin-top: 1px; }
+  .check.done { background: #2ecc71; border-color: #2ecc71; }
+
+  /* Focus CTA */
+  .focus-cta { margin: 0 20px 20px; }
+  .focus-btn { width: 100%; background: #fff; color: #0d0d0d; font-size: 15px; font-weight: 700; padding: 14px; border: none; border-radius: 10px; cursor: pointer; letter-spacing: -0.01em; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; border-top: 1px solid #1e1e1e; padding: 8px 0 20px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; cursor: pointer; }
+  .tab-icon { font-size: 18px; }
+  .tab-label { font-size: 10px; color: #444; letter-spacing: 0.05em; }
+  .tab.active .tab-label { color: #fff; }
+  .tab.active .tab-icon { filter: brightness(2); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <span class="nav-date">SUN · APR 27</span>
+    <div class="nav-coins"><span class="coin-icon"></span> 840 $80HD</div>
+  </div>
+
+  <div class="header">
+    <h1>Today</h1>
+    <p>3 tasks left · 2 done</p>
+  </div>
+
+  <div class="must-do-bar">
+    <div class="label">⚡ Must Do Today</div>
+    <div class="must-do-task">File quarterly tax estimate <span>· 2h · AM</span></div>
+  </div>
+
+  <div class="buckets">
+    <div>
+      <div class="bucket-label">Morning</div>
+      <div class="task-card done">
+        <span class="check done">✓</span>
+        <div class="task-title">Review pitch deck slides</div>
+        <div class="task-meta"><span class="task-time">45 min</span><span class="task-coins">+30 🪙</span></div>
+      </div>
+      <div class="task-card done">
+        <span class="check done">✓</span>
+        <div class="task-title">Email back Marcus about funding</div>
+        <div class="task-meta"><span class="task-time">20 min</span><span class="task-coins">+20 🪙</span></div>
+      </div>
+      <div class="task-card">
+        <span class="check"></span>
+        <div class="task-title">File quarterly tax estimate</div>
+        <div class="task-meta"><span class="task-time">2 hr</span><span class="task-coins">+80 🪙</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="bucket-label">Afternoon</div>
+      <div class="task-card">
+        <span class="check"></span>
+        <div class="task-title">Ship BoxDay landing page copy</div>
+        <div class="task-meta"><span class="task-time">1 hr</span><span class="task-coins">+50 🪙</span></div>
+      </div>
+      <div class="task-card">
+        <span class="check"></span>
+        <div class="task-title">Record TikTok intro clip</div>
+        <div class="task-meta"><span class="task-time">30 min</span><span class="task-coins">+30 🪙</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-cta">
+    <button class="focus-btn">▶ Start Focus Mode</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active"><span class="tab-icon">◻</span><span class="tab-label">Today</span></div>
+    <div class="tab"><span class="tab-icon">📅</span><span class="tab-label">Week</span></div>
+    <div class="tab"><span class="tab-icon">📆</span><span class="tab-label">Month</span></div>
+    <div class="tab"><span class="tab-icon">🧠</span><span class="tab-label">Dump</span></div>
+    <div class="tab"><span class="tab-icon">⚙️</span><span class="tab-label">Settings</span></div>
+  </div>
+</div>
+</body>
+</html>
