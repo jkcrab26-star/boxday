@@ -48,6 +48,15 @@ body {
   min-height: 100dvh;
 }
 
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Drag-over slot highlight */
 .slot-active {
   background-color: #ede9fe !important;
