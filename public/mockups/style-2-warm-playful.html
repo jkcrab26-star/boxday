@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80HD — Style 2: Warm Playful (Duolingo-inspired)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #fdf8f0; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Nunito', 'Rounded Mplus 1c', sans-serif; min-height: 100vh; }
+
+  .app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; }
+  .streak { display: flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 800; color: #ff6b35; }
+  .coins-pill { background: #fff8e1; border: 2px solid #ffd740; border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 800; color: #f59e0b; }
+
+  /* Header */
+  .header { padding: 10px 20px 16px; text-align: center; }
+  .avatar { width: 56px; height: 56px; background: linear-gradient(135deg, #a78bfa, #818cf8); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 12px rgba(129,140,248,0.4); }
+  .header h2 { font-size: 18px; font-weight: 800; color: #1a1a1a; }
+  .header p { font-size: 13px; color: #888; margin-top: 2px; }
+
+  /* Must do */
+  .must-do { margin: 0 16px 16px; background: #fff3cd; border: 2px solid #ffd740; border-radius: 16px; padding: 14px 16px; }
+  .must-do-head { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .must-do-task { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .must-do-badge { display: inline-block; background: #fbbf24; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+
+  /* Progress bar */
+  .progress-section { padding: 0 16px 16px; }
+  .progress-label { font-size: 12px; font-weight: 700; color: #888; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .progress-track { height: 10px; background: #e8e0d6; border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 40%; background: linear-gradient(90deg, #34d399, #10b981); border-radius: 10px; }
+
+  /* Buckets */
+  .buckets { flex: 1; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .bucket-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .bucket-emoji { font-size: 18px; }
+  .bucket-name { font-size: 13px; font-weight: 800; color: #555; text-transform: uppercase; letter-spacing: 0.06em; }
+  .task-card { background: #fff; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 2px solid transparent; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+  .task-card:hover { border-color: #a78bfa; box-shadow: 0 4px 16px rgba(167,139,250,0.2); }
+  .task-card.done { background: #f0fdf4; border-color: #bbf7d0; }
+  .task-check { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid #e0d6cc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+  .task-check.done { background: #10b981; border-color: #10b981; color: #fff; }
+  .task-body { flex: 1; }
+  .task-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .task-card.done .task-title { text-decoration: line-through; color: #aaa; }
+  .task-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+  .task-reward { background: #fef3c7; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 800; color: #d97706; white-space: nowrap; }
+
+  /* Focus CTA */
+  .focus-cta { padding: 0 16px 16px; }
+  .focus-btn { width: 100%; background: linear-gradient(135deg, #7c3aed, #6366f1); color: #fff; font-size: 16px; font-weight: 800; padding: 16px; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 16px rgba(124,58,237,0.35); letter-spacing: 0.01em; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; border-top: 2px solid #f0e8da; padding: 10px 0 24px; background: #fff; border-radius: 0; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px; cursor: pointer; }
+  .tab-icon { font-size: 20px; }
+  .tab-label { font-size: 10px; font-weight: 700; color: #bbb; }
+  .tab.active .tab-label { color: #7c3aed; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <div class="streak">🔥 7 day streak</div>
+    <div class="coins-pill">🪙 840</div>
+  </div>
+
+  <div class="header">
+    <div class="avatar">🧠</div>
+    <h2>Sunday vibes, let's box it!</h2>
+    <p>Apr 27 · 5 tasks today</p>
+  </div>
+
+  <div class="must-do">
+    <div class="must-do-head">⚡ Must Do Today</div>
+    <div class="must-do-task">File quarterly tax estimate <span class="must-do-badge">2h</span></div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-label"><span>Today's progress</span><span>2 / 5</span></div>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+  </div>
+
+  <div class="buckets">
+    <div>
+      <div class="bucket-head"><span class="bucket-emoji">🌅</span><span class="bucket-name">Morning</span></div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body">
+          <div class="task-title">Review pitch deck slides</div>
+          <div class="task-sub">45 min</div>
+        </div>
+        <div class="task-reward">+30 🪙</div>
+      </div>
+      <div class="task-card done">
+        <div class="task-check done">✓</div>
+        <div class="task-body">
+          <div class="task-title">Email Marcus about funding</div>
+          <div class="task-sub">20 min</div>
+        </div>
+        <div class="task-reward">+20 🪙</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">File quarterly tax estimate</div>
+          <div class="task-sub">2 hr · Must do!</div>
+        </div>
+        <div class="task-reward">+80 🪙</div>
+      </div>
+    </div>
+    <div>
+      <div class="bucket-head"><span class="bucket-emoji">☀️</span><span class="bucket-name">Afternoon</span></div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">Ship BoxDay landing page copy</div>
+          <div class="task-sub">1 hr</div>
+        </div>
+        <div class="task-reward">+50 🪙</div>
+      </div>
+      <div class="task-card">
+        <div class="task-check"></div>
+        <div class="task-body">
+          <div class="task-title">Record TikTok intro clip</div>
+          <div class="task-sub">30 min</div>
+        </div>
+        <div class="task-reward">+30 🪙</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-cta">
+    <button class="focus-btn">▶ Start Focus Mode</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active"><span class="tab-icon">🏠</span><span class="tab-label">Today</span></div>
+    <div class="tab"><span class="tab-icon">📅</span><span class="tab-label">Week</span></div>
+    <div class="tab"><span class="tab-icon">📆</span><span class="tab-label">Month</span></div>
+    <div class="tab"><span class="tab-icon">🧠</span><span class="tab-label">Dump</span></div>
+    <div class="tab"><span class="tab-icon">🛒</span><span class="tab-label">Rewards</span></div>
+  </div>
+</div>
+</body>
+</html>
