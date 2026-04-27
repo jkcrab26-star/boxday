@@ -1,0 +1,37 @@
+{
+  "topic": 3,
+  "title": "Why Your To-Do List Isn't the Problem",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "The problem isn't your to-do list. It's that to-do lists were never designed for ADHD brains.",
+      "textOverlay": "your to-do list is not the problem",
+      "brollSearch": "long todo list notebook overwhelmed"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You've tried every app. Every notebook. Every color-coded system. And at the end of the day, the list is longer than it was this morning.",
+      "textOverlay": "tried every system. list still growing.",
+      "brollSearch": "phone apps productivity planning frustrated"
+    },
+    {
+      "id": "science",
+      "voiceover": "Standard to-do lists work on the assumption that seeing a task is enough to start it. For neurotypical brains, that's mostly true. For ADHD brains, seeing the task and initiating the task are two completely different neurological events — separated by a dopamine gap. The list becomes a reminder of everything you haven't done, which spikes cortisol, which tanks motivation, which makes the gap wider.",
+      "textOverlay": "seeing != starting (for ADHD brains)",
+      "brollSearch": "brain dopamine neurons science"
+    },
+    {
+      "id": "tip",
+      "voiceover": "The fix: replace the list with a box. One task, one time window. When the window closes, you're done — regardless of whether the task is finished. The box removes the infinite-list guilt loop.",
+      "textOverlay": "one task. one window. done.",
+      "brollSearch": "calendar time block schedule planning"
+    },
+    {
+      "id": "cta",
+      "voiceover": "That's the BoxDay idea. Link in bio.",
+      "textOverlay": "link in bio -> BoxDay",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

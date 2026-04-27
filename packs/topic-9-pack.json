@@ -1,0 +1,37 @@
+{
+  "topic": 9,
+  "title": "What ADHD Meds Do (and What They Can't)",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "ADHD medication doesn't give you focus. It gives you the ability to choose where your focus goes.",
+      "textOverlay": "meds != focus. meds = choosing where focus goes.",
+      "brollSearch": "medication pills prescription bottle"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "First week on meds, a lot of people with ADHD describe the same thing: an eerie quiet. No racing thoughts. They do the dishes, open their email, start a task they've avoided for months. Then week two: the med wears off at 4pm and everything they didn't finish is still there.",
+      "textOverlay": "the quiet is real. but it's not magic.",
+      "brollSearch": "person focused working desk calm quiet"
+    },
+    {
+      "id": "science",
+      "voiceover": "Stimulant medications — Adderall, Ritalin, Vyvanse — work by increasing dopamine and norepinephrine availability in the prefrontal cortex. This raises baseline executive function: planning, initiating, sustaining attention, and filtering distraction. What they don't do: create motivation that isn't there, fix the executive function habits that ADHD made harder to build, or work past their pharmacological window. Medication is a floor, not a ceiling.",
+      "textOverlay": "raises the floor -- doesn't replace the skills",
+      "brollSearch": "brain neuroscience prefrontal cortex science"
+    },
+    {
+      "id": "reframe",
+      "voiceover": "This is why systems matter even when you're medicated. The medication gives you the window. What you do inside that window — what structure you build — determines whether you hit your ceiling or just your floor. ADHD tools work best when they meet you inside that window. BoxDay is a system for the window.",
+      "textOverlay": "medication opens the window. systems decide what happens inside it.",
+      "brollSearch": "productivity system planning structure organized desk"
+    },
+    {
+      "id": "cta",
+      "voiceover": "Link in bio.",
+      "textOverlay": "link in bio -> BoxDay",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

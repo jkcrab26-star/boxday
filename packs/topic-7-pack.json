@@ -1,0 +1,37 @@
+{
+  "topic": 7,
+  "title": "Dopamine Menu: How to Design Your Own Reward System",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "What if your brain had a menu of things guaranteed to work when you're stuck? You can build that.",
+      "textOverlay": "the dopamine menu -- ADHD productivity hack",
+      "brollSearch": "menu options choices planning notebook"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You're stuck. Can't start. Brain is flat. Scrolling. The usual. What do you reach for? Social media — works for 3 minutes. Food — same. TV — pulls you under for 2 hours. None of these are actually recharging you. They're borrowing dopamine from tomorrow.",
+      "textOverlay": "borrowing dopamine from tomorrow",
+      "brollSearch": "person scrolling phone couch distracted"
+    },
+    {
+      "id": "science",
+      "voiceover": "ADHD researcher and author Ned Hallowell coined the dopamine menu concept: a pre-curated list of activities that give your brain a genuine dopamine hit without the cortisol crash afterward. The key distinction is activities that energize versus activities that numb. Energizing: brief physical movement, a 5-minute creative task, a song you love, a glass of water and a change of room. Numbing: doomscrolling, food, passive TV. Both feel good immediately — only one leaves you ready to start work.",
+      "textOverlay": "energize vs. numb -- only one leaves you ready",
+      "brollSearch": "person stretching movement energy productive"
+    },
+    {
+      "id": "tip",
+      "voiceover": "Your dopamine menu is personal. Write down 5 things that take under 5 minutes, feel genuinely good, and don't spiral. That's your stuck-brain emergency kit. When BoxDay detects you haven't logged a task in a while, we nudge you toward yours.",
+      "textOverlay": "5 things x under 5 min x feel good x don't spiral",
+      "brollSearch": "writing notebook list pen planning"
+    },
+    {
+      "id": "cta",
+      "voiceover": "Link in bio.",
+      "textOverlay": "link in bio -> BoxDay early access",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

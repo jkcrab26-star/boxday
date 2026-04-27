@@ -1,0 +1,37 @@
+{
+  "topic": 10,
+  "title": "The Completion High — Why Finishing One Task Unlocks the Next",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "There's a real neurological reason why finishing one small thing makes the next thing easier.",
+      "textOverlay": "why finishing one thing unlocks the next",
+      "brollSearch": "domino effect chain reaction achievement"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "Some days you get one task done and suddenly three more happen. Other days nothing starts. Same brain, different days. What changed?",
+      "textOverlay": "same brain. why do some days just flow?",
+      "brollSearch": "person productive desk working flow state"
+    },
+    {
+      "id": "science",
+      "voiceover": "Task completion triggers a dopamine release in the nucleus accumbens — the brain's reward center. For ADHD brains, this release is particularly meaningful because baseline dopamine is lower than neurotypical. That post-completion hit doesn't just feel good — it temporarily boosts the dopamine availability that the next task needs to initiate. You're not riding motivation. You're stacking neurochemical credit. The first task primes the second. The second primes the third. Miss the first — the chain never starts.",
+      "textOverlay": "stacking neurochemical credit",
+      "brollSearch": "checkboxes ticked completed tasks list"
+    },
+    {
+      "id": "tip",
+      "voiceover": "This is why the first task of the day is the most important one. It doesn't matter how big it is — it matters that it's completable. Small, done, visible. In BoxDay, your completion streak is tracked and rewarded. Not because gamification is fun — because the streak is the chain, and the chain is how ADHD brains actually get things done.",
+      "textOverlay": "first task: small. done. visible.",
+      "brollSearch": "streak calendar habit tracking daily"
+    },
+    {
+      "id": "cta",
+      "voiceover": "The completion loop. Link in bio.",
+      "textOverlay": "link in bio -> BoxDay early access",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "topic": 6,
+  "title": "The 2-Minute Rule Actually Works — Here's Why Neurologically",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "The 2-minute rule isn't a productivity hack. It's a dopamine exploit.",
+      "textOverlay": "the 2-minute rule is a dopamine exploit",
+      "brollSearch": "timer two minutes stopwatch quick"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You know the rule: if a task takes less than 2 minutes, do it now. But for ADHD brains, 'just do it' is basically an insult. So why does the 2-minute rule actually work when nothing else does?",
+      "textOverlay": "why does \"just do it\" work HERE specifically",
+      "brollSearch": "person desk procrastinating distracted phone"
+    },
+    {
+      "id": "science",
+      "voiceover": "David Allen's original insight was behavioral, not neurological. But the neuroscience explains it better: tasks under 2 minutes are short enough that the ADHD brain can hold the completion in working memory simultaneously with the start. You can see the finish line before you begin. That visibility is what triggers the dopamine release that initiates action — the same dopamine hit that long tasks can't provide because the brain can't hold 'done' in view. You're not starting a task. You're doing a tiny, complete thing.",
+      "textOverlay": "completion in view = dopamine fires = you start",
+      "brollSearch": "brain neurons firing dopamine science"
+    },
+    {
+      "id": "tip",
+      "voiceover": "The lesson: break everything into 2-minute-visible chunks. Not 'write the report' — 'open the doc.' Not 'clean the apartment' — 'put 5 things away.' Make every task completable in your field of vision. That's time-boxing. That's what BoxDay is built on.",
+      "textOverlay": "make every task completable in view",
+      "brollSearch": "checklist tasks completing organized desk"
+    },
+    {
+      "id": "cta",
+      "voiceover": "Link in bio.",
+      "textOverlay": "link in bio -> BoxDay",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

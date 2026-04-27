@@ -1,0 +1,37 @@
+{
+  "topic": 8,
+  "title": "ADHD and Subscriptions: Why We Cancel Everything (and One We Shouldn't)",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "People with ADHD cancel more subscriptions than almost any other group. There's a neurological reason for that — and one exception.",
+      "textOverlay": "ADHD brains cancel subscriptions more than anyone else",
+      "brollSearch": "phone screen cancel subscription notification"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You sign up, you're excited, you use it twice, and then it just exists. Quietly charging your card every month while you forget it's there. Then you see it on your statement, feel guilty, cancel it, and repeat the cycle. Streaming services, gym memberships, productivity apps — the graveyard is real.",
+      "textOverlay": "the subscription graveyard",
+      "brollSearch": "credit card statement bills cancelled services"
+    },
+    {
+      "id": "science",
+      "voiceover": "Here's why. Two things combine to make recurring subscriptions brutal for ADHD brains. First: time blindness. Monthly billing is a future cost — and ADHD brains perceive future costs as almost abstract. The charge next month feels genuinely distant in a way neurotypical brains don't experience. Second: executive dysfunction means the gap between 'I should use this' and 'I actually open the app' is enormous. You're paying for intention, not usage.",
+      "textOverlay": "paying for intention, not usage",
+      "brollSearch": "calendar future date abstract time planning"
+    },
+    {
+      "id": "reframe",
+      "voiceover": "The one exception: when the subscription earns you something back on the days you actually use it. Not a promise of future value — a credit on your account today, for the block you just completed. That's a dopamine-compatible payment model. You use it, you earn, the subscription pays for itself over time. For an ADHD brain, that changes the math completely — it's not a recurring guilt charge, it's a tool that pays you to keep using it.",
+      "textOverlay": "earns you something back TODAY -- not a future promise",
+      "brollSearch": "earning rewards coins points achievement"
+    },
+    {
+      "id": "cta",
+      "voiceover": "BoxDay is $9 a month. Power users earn a free month in about 6 weeks of real use. Early access open. Link in bio.",
+      "textOverlay": "BoxDay -- $9/mo. Free month in ~6 weeks of real use.",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

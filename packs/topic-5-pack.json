@@ -1,0 +1,37 @@
+{
+  "topic": 5,
+  "title": "ADHD Tax — What Executive Dysfunction Is Actually Costing You",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "There's a real dollar amount attached to ADHD — and most people with it have no idea what it is.",
+      "textOverlay": "the ADHD tax -- what it's actually costing you",
+      "brollSearch": "money bills wallet finances"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "Late fees from forgotten bills. Subscriptions you forgot to cancel. The job you were let go from because of missed deadlines. The speeding ticket because you were late and rushed. The groceries you bought and never cooked. Add it up.",
+      "textOverlay": "late fees / forgotten subs / job performance / rushing fines",
+      "brollSearch": "bank statement bills mail pile unopened"
+    },
+    {
+      "id": "science",
+      "voiceover": "Studies estimate that adults with ADHD lose an average of $4,000 to $14,000 per year in productivity and financial penalties directly linked to executive dysfunction. That's not including the emotional cost, the relationship cost, or the career cost. Researchers call it the executive function tax.",
+      "textOverlay": "$4,000-$14,000/year -- studies estimate",
+      "brollSearch": "calculator money counting stressed finances"
+    },
+    {
+      "id": "reframe",
+      "voiceover": "Most productivity tools make you feel guilty for paying this tax. We think the goal should be different — what if your productivity app actually helped you earn some of it back? Not a metaphor. Literally.",
+      "textOverlay": "earn it back -- literally",
+      "brollSearch": "person at desk productive focused working"
+    },
+    {
+      "id": "cta",
+      "voiceover": "That's what BoxDay is building. Early access — link in bio.",
+      "textOverlay": "BoxDay -- earn back your subscription. link in bio.",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

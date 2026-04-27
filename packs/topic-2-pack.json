@@ -1,0 +1,37 @@
+{
+  "topic": 2,
+  "title": "Time Blindness Is a Real Neurological Condition",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "You're not bad with time. Your brain processes time differently — and there's a brain scan to prove it.",
+      "textOverlay": "time blindness != bad at time management",
+      "brollSearch": "clock hourglass time running"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You look up and three hours have disappeared. Or you're convinced you have twenty minutes left and you had two. It's not forgetfulness. It's not laziness.",
+      "textOverlay": "where did 3 hours go",
+      "brollSearch": "person confused clock watching time"
+    },
+    {
+      "id": "science",
+      "voiceover": "ADHD researcher Russell Barkley calls it time blindness — a neurological impairment in the ability to sense the passage of time. MRI studies show ADHD brains have reduced activity in the right hemisphere regions responsible for time perception. The clock in your head isn't broken — it just runs at a different speed than everyone else's.",
+      "textOverlay": "ADHD brains: reduced right-hemisphere time perception",
+      "brollSearch": "brain scan mri neuroscience research"
+    },
+    {
+      "id": "tip",
+      "voiceover": "The fix isn't willpower. It's making time visible — analog clocks, visible countdown timers, time-boxed blocks where the end is always in sight. Not 'work on this' — 'work on this for 25 minutes, and then you're done.'",
+      "textOverlay": "make time VISIBLE",
+      "brollSearch": "countdown timer desk productivity focus"
+    },
+    {
+      "id": "cta",
+      "voiceover": "BoxDay was built on this idea. Link in bio.",
+      "textOverlay": "link in bio -> BoxDay",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}

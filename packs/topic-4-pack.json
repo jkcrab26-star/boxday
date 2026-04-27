@@ -1,0 +1,37 @@
+{
+  "topic": 4,
+  "title": "The Science of Body Doubling",
+  "voiceId": "TX3LPaxmHKxFdv7VOQHJ",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "Why are you more productive on a video call than working alone? There's actually a neurological reason.",
+      "textOverlay": "why you work better when someone else is there",
+      "brollSearch": "video call zoom working remote"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You've been putting off a task for three days. You get on a Zoom call, your camera off, other person doing their own work — and you finish in forty minutes.",
+      "textOverlay": "3 days -> 40 minutes (with body double)",
+      "brollSearch": "laptop desk working alone procrastinating"
+    },
+    {
+      "id": "science",
+      "voiceover": "This is called body doubling — and for ADHD brains, the presence of another person activates the accountability circuit in the prefrontal cortex, which in turn releases enough dopamine to bridge the initiation gap. You're essentially borrowing someone else's focus. Research from ADHD coach pioneers including Dr. Ned Hallowell confirms it — social presence is one of the most reliable ADHD productivity hacks that actually works.",
+      "textOverlay": "body doubling -- borrowing someone else's focus",
+      "brollSearch": "two people working coworking cafe study"
+    },
+    {
+      "id": "tip",
+      "voiceover": "Apps like Focusmate have built entire products around this. Body doubling channels on Discord. Co-working cafes. You don't need to explain it to the other person — they just need to exist in the room, or on the screen.",
+      "textOverlay": "Focusmate / Discord co-working / cafe",
+      "brollSearch": "coworking space coffee shop working people"
+    },
+    {
+      "id": "cta",
+      "voiceover": "We're thinking about how to bring this into BoxDay. Stay tuned. Link in bio.",
+      "textOverlay": "BoxDay -- coming soon. link in bio.",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}
