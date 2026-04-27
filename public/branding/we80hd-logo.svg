@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Deep purple to electric blue radial gradient for background -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#2D1B69"/>
+      <stop offset="100%" stop-color="#0D0730"/>
+    </radialGradient>
+
+    <!-- Gold/yellow accent gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE03A"/>
+      <stop offset="100%" stop-color="#F7A800"/>
+    </linearGradient>
+
+    <!-- Electric blue gradient for text -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#58CFFF"/>
+      <stop offset="100%" stop-color="#1A90D9"/>
+    </linearGradient>
+
+    <!-- White highlight for text -->
+    <linearGradient id="whiteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#D0EAFF"/>
+    </linearGradient>
+
+    <!-- Glow filter for lightning bolt -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle drop shadow for badge -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Inner glow for badge edge -->
+    <filter id="innerGlow" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- ── Background square with rounded corners ── -->
+  <rect x="0" y="0" width="400" height="400" rx="40" ry="40" fill="url(#bgGrad)"/>
+
+  <!-- ── Outer hexagonal badge shape ── -->
+  <!-- Hex points for a flat-top hexagon centered at 200,200, radius ~170 -->
+  <polygon
+    points="200,32 351,116 351,284 200,368 49,284 49,116"
+    fill="none"
+    stroke="url(#goldGrad)"
+    stroke-width="7"
+    filter="url(#shadow)"
+    opacity="0.85"
+  />
+
+  <!-- Inner hex ring (thinner) -->
+  <polygon
+    points="200,48 338,124 338,276 200,352 62,276 62,124"
+    fill="none"
+    stroke="#7B5CF5"
+    stroke-width="2.5"
+    opacity="0.6"
+  />
+
+  <!-- ── Brain silhouette (cartoonish, two-lobe) centered upper area ── -->
+  <!-- Left lobe -->
+  <ellipse cx="182" cy="148" rx="38" ry="34" fill="#7B5CF5" opacity="0.9"/>
+  <!-- Right lobe -->
+  <ellipse cx="220" cy="148" rx="38" ry="34" fill="#7B5CF5" opacity="0.9"/>
+  <!-- Bottom filler to connect lobes -->
+  <rect x="173" y="148" width="56" height="22" fill="#7B5CF5" opacity="0.9" rx="6"/>
+
+  <!-- Brain center groove line -->
+  <line x1="200" y1="118" x2="200" y2="168" stroke="#0D0730" stroke-width="3.5" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Brain highlight wrinkles - left lobe -->
+  <path d="M165,138 Q170,128 178,133" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M160,150 Q167,140 174,145" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M170,160 Q177,152 183,157" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- Brain highlight wrinkles - right lobe -->
+  <path d="M236,138 Q230,128 222,133" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M240,150 Q233,140 226,145" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M230,160 Q223,152 217,157" stroke="#A78BFA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+  <!-- ── Lightning bolt overlay on brain ── -->
+  <polygon
+    points="205,118 193,152 202,152 196,182 212,148 203,148 213,118"
+    fill="url(#goldGrad)"
+    filter="url(#glow)"
+    stroke="#FFF8C0"
+    stroke-width="1"
+  />
+
+  <!-- ── "we" prefix text (smaller, electric blue) ── -->
+  <text
+    x="200"
+    y="230"
+    font-family="'Arial Black', 'Impact', 'Haettenschweiler', sans-serif"
+    font-size="36"
+    font-weight="900"
+    fill="url(#blueGrad)"
+    text-anchor="middle"
+    letter-spacing="2"
+    dominant-baseline="auto"
+  >we</text>
+
+  <!-- ── "80HD" large bold gold text ── -->
+  <text
+    x="200"
+    y="288"
+    font-family="'Arial Black', 'Impact', 'Haettenschweiler', sans-serif"
+    font-size="72"
+    font-weight="900"
+    fill="url(#goldGrad)"
+    text-anchor="middle"
+    letter-spacing="-2"
+    dominant-baseline="auto"
+    filter="url(#glow)"
+  >80HD</text>
+
+  <!-- Thin underline accent under 80HD -->
+  <rect x="95" y="294" width="210" height="4" rx="2" fill="url(#goldGrad)" opacity="0.6"/>
+
+  <!-- ── Small star sparks (ADHD energy detail) ── -->
+  <!-- Top-left spark -->
+  <polygon points="72,100 75,92 78,100 86,103 78,106 75,114 72,106 64,103"
+    fill="#FFE03A" opacity="0.85" filter="url(#glow)"/>
+  <!-- Top-right spark -->
+  <polygon points="328,100 331,92 334,100 342,103 334,106 331,114 328,106 320,103"
+    fill="#58CFFF" opacity="0.85" filter="url(#glow)"/>
+  <!-- Bottom-left small -->
+  <polygon points="82,300 84,295 86,300 91,302 86,304 84,309 82,304 77,302"
+    fill="#FFE03A" opacity="0.7"/>
+  <!-- Bottom-right small -->
+  <polygon points="318,300 320,295 322,300 327,302 322,304 320,309 318,304 313,302"
+    fill="#58CFFF" opacity="0.7"/>
+
+  <!-- ── Tagline (optional, very small) ── -->
+  <text
+    x="200"
+    y="330"
+    font-family="'Arial', 'Helvetica', sans-serif"
+    font-size="13"
+    font-weight="400"
+    fill="#A78BFA"
+    text-anchor="middle"
+    letter-spacing="4"
+    dominant-baseline="auto"
+    opacity="0.85"
+  >FOCUS. FLOW. FLY.</text>
+</svg>
