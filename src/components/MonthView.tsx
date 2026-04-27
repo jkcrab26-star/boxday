@@ -29,7 +29,7 @@ export function MonthView() {
     return 3
   }
 
-  const loadColors = ['', 'bg-indigo-100', 'bg-indigo-200', 'bg-indigo-300']
+  const loadColors = ['', 'bg-violet-100', 'bg-violet-200', 'bg-violet-300']
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
@@ -61,10 +61,10 @@ export function MonthView() {
               className={`
                 aspect-square flex items-center justify-center rounded-lg text-sm font-medium
                 transition-all border
-                ${isSelected ? 'border-indigo-500 text-indigo-700' : 'border-transparent'}
-                ${isToday ? 'ring-2 ring-indigo-400' : ''}
+                ${isSelected ? 'border-violet-500 text-violet-700' : 'border-transparent'}
+                ${isToday ? 'ring-2 ring-violet-400' : ''}
                 ${load > 0 ? loadColors[load] : 'hover:bg-gray-100'}
-                ${load > 0 ? 'text-indigo-800' : 'text-gray-700'}
+                ${load > 0 ? 'text-violet-800' : 'text-gray-700'}
               `}
             >
               {dayNum}
@@ -75,13 +75,13 @@ export function MonthView() {
 
       <div className="mt-4 flex items-center gap-4 justify-center text-xs text-gray-400">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-indigo-100 inline-block" /> Light
+          <span className="w-3 h-3 rounded bg-violet-100 inline-block" /> Light
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-indigo-200 inline-block" /> Medium
+          <span className="w-3 h-3 rounded bg-violet-200 inline-block" /> Medium
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-indigo-300 inline-block" /> Heavy
+          <span className="w-3 h-3 rounded bg-violet-300 inline-block" /> Heavy
         </span>
       </div>
 

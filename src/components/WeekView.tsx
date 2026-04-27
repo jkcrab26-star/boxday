@@ -30,12 +30,12 @@ export function WeekView() {
               onClick={() => goToDay(date)}
               className={`
                 rounded-xl p-2 text-left border transition-all min-h-[120px]
-                ${isSelected ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 bg-white hover:border-gray-300'}
+                ${isSelected ? 'border-violet-400 bg-violet-50' : 'border-gray-200 bg-white hover:border-gray-300'}
               `}
             >
               <div className="flex items-center gap-1 mb-2">
                 <span className="text-xs text-gray-500 font-medium">{dayLabel}</span>
-                <span className={`text-sm font-semibold ${isToday ? 'text-indigo-600' : 'text-gray-800'}`}>
+                <span className={`text-sm font-semibold ${isToday ? 'text-violet-600' : 'text-gray-800'}`}>
                   {dayNum}
                 </span>
               </div>

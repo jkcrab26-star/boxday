@@ -11,11 +11,27 @@ import { useStore } from '../store'
 import type { Task } from '../types'
 import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/time'
 
+const MUST_DO_CAP = 3
+
 export function DayView() {
   const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, pinToMustDo, unpinFromMustDo, settings } = useStore()
   const SLOTS = getSlots(settings.dayStartHour, 22)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [capNudge, setCapNudge] = useState(false)
+
+  const openMustDoCount = tasks.filter(t => t.mustDoToday && t.status === 'open').length
+
+  function handlePin(id: string, pinned: boolean) {
+    if (pinned) {
+      unpinFromMustDo(id)
+    } else if (openMustDoCount >= MUST_DO_CAP) {
+      setCapNudge(true)
+      setTimeout(() => setCapNudge(false), 4000)
+    } else {
+      pinToMustDo(id)
+    }
+  }
 
   const scheduledTasks = tasks.filter(
     t => t.status === 'open' && t.scheduledDate === selectedDate
@@ -64,6 +80,14 @@ export function DayView() {
       <div className="flex gap-0 h-[calc(100dvh-56px)] overflow-hidden">
         {/* Time grid */}
         <div className="flex-1 overflow-y-auto">
+          {/* Must-do cap nudge */}
+          {capNudge && (
+            <div className="mx-4 mt-3 px-3 py-2 bg-amber-50 border-2 border-amber-300 rounded-xl text-sm font-semibold text-amber-800 flex items-center gap-2">
+              <span>⚡</span>
+              <span>You already have 3 must-dos today. Swap one out first!</span>
+            </div>
+          )}
+
           {/* Busy day indicator */}
           {busyHours > 8 && (
             <div className="mx-4 mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
@@ -88,7 +112,7 @@ export function DayView() {
                     onComplete={completeTask}
                     onEdit={(id) => setEditingId(id)}
                     onDelete={deleteTask}
-                    onPin={(id, pinned) => pinned ? unpinFromMustDo(id) : pinToMustDo(id)}
+                    onPin={(id, pinned) => handlePin(id, pinned)}
                   />
                 </div>
               )
@@ -104,7 +128,7 @@ export function DayView() {
             onComplete={completeTask}
             onEdit={(id) => setEditingId(id)}
             onDelete={deleteTask}
-            onPin={(id, pinned) => pinned ? unpinFromMustDo(id) : pinToMustDo(id)}
+            onPin={(id, pinned) => handlePin(id, pinned)}
           />
 
           {doneTasks.length > 0 && (
@@ -126,7 +150,7 @@ export function DayView() {
 
       <DragOverlay>
         {activeTask && (
-          <div className="bg-white border border-indigo-300 rounded-xl px-3 py-2 shadow-lg text-sm text-gray-900 max-w-xs opacity-90">
+          <div className="bg-white border border-violet-300 rounded-xl px-3 py-2 shadow-lg text-sm text-gray-900 max-w-xs opacity-90">
             {activeTask.title}
           </div>
         )}
@@ -167,7 +191,7 @@ function EditModal({ task, onSave, onClose }: {
           value={title}
           onChange={e => setTitle(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') onSave(title, Number(minutes) || null) }}
-          className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-violet-400"
         />
         <p className="text-xs text-gray-500 mb-2">Duration</p>
         <div className="flex gap-1 flex-wrap mb-4">
@@ -176,7 +200,7 @@ function EditModal({ task, onSave, onClose }: {
               key={b}
               onClick={() => setMinutes(String(b))}
               className={`px-2 py-1 text-xs rounded-lg font-mono ${
-                Number(minutes) === b ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                Number(minutes) === b ? 'bg-violet-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {b < 60 ? `${b}m` : `${b / 60}h`}
@@ -187,7 +211,7 @@ function EditModal({ task, onSave, onClose }: {
           <button
             onClick={() => onSave(title, Number(minutes) || null)}
             disabled={!title.trim()}
-            className="flex-1 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-medium disabled:opacity-40"
+            className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-xl text-sm font-medium disabled:opacity-40"
           >
             Save
           </button>
@@ -303,7 +327,7 @@ function DraggableTaskChip({ task, onFocus, onComplete, onEdit, onDelete, onPin,
         group relative flex items-center gap-1 bg-white border rounded-lg
         select-none
         ${task.mustDoToday ? 'border-rose-300' : 'border-gray-200'}
-        ${isDragging ? 'opacity-40' : 'hover:border-indigo-300 hover:shadow-sm'}
+        ${isDragging ? 'opacity-40' : 'hover:border-violet-300 hover:shadow-sm'}
         ${sidebar ? 'px-2 py-1.5 text-xs w-full' : 'px-2 py-1 text-xs'}
       `}
     >
@@ -333,7 +357,7 @@ function DraggableTaskChip({ task, onFocus, onComplete, onEdit, onDelete, onPin,
           {/* Focus */}
           <button
             onClick={e => { e.stopPropagation(); onFocus(task.id) }}
-            className="text-indigo-500 hover:text-indigo-700 shrink-0"
+            className="text-violet-500 hover:text-violet-700 shrink-0"
             title="Start focus"
           >
             ▶

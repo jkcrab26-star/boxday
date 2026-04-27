@@ -43,7 +43,7 @@ export function Settings() {
                 value={settings.anthropicApiKey}
                 onChange={e => updateSetting('anthropicApiKey', e.target.value)}
                 placeholder="sk-ant-..."
-                className="flex-1 text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-indigo-400 font-mono"
+                className="flex-1 text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-violet-400 font-mono"
               />
               <button
                 onClick={() => setShowAnthropicKey(s => !s)}
@@ -60,7 +60,7 @@ export function Settings() {
                 value={settings.openaiApiKey}
                 onChange={e => updateSetting('openaiApiKey', e.target.value)}
                 placeholder="sk-..."
-                className="flex-1 text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-indigo-400 font-mono"
+                className="flex-1 text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-violet-400 font-mono"
               />
               <button
                 onClick={() => setShowOpenAIKey(s => !s)}
@@ -148,7 +148,7 @@ export function Settings() {
                   onClick={() => updateSetting('defaultBlockMinutes', mins)}
                   className={`px-2 py-1 rounded-lg text-xs font-mono ${
                     settings.defaultBlockMinutes === mins
-                      ? 'bg-indigo-500 text-white'
+                      ? 'bg-violet-500 text-white'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                   }`}
                 >
@@ -186,7 +186,7 @@ export function Settings() {
                   onClick={() => updateSetting('theme', t)}
                   className={`px-3 py-1 rounded-lg text-xs font-medium capitalize ${
                     settings.theme === t
-                      ? 'bg-indigo-500 text-white'
+                      ? 'bg-violet-500 text-white'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                   }`}
                 >
@@ -234,7 +234,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
     <button
       onClick={() => onChange(!value)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        value ? 'bg-indigo-500' : 'bg-gray-300 dark:bg-gray-600'
+        value ? 'bg-violet-500' : 'bg-gray-300 dark:bg-gray-600'
       }`}
       role="switch"
       aria-checked={value}

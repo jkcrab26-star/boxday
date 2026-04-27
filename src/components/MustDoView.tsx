@@ -2,20 +2,28 @@ import { useState } from 'react'
 import { useStore } from '../store'
 import type { Task } from '../types'
 
+const MUST_DO_CAP = 3
+
 export function MustDoView() {
   const { tasks, addTask, completeTask, deleteTask, editTask, pinToMustDo, unpinFromMustDo, scheduleTask, selectedDate } = useStore()
   const [input, setInput] = useState('')
+  const [capNudge, setCapNudge] = useState(false)
 
   const mustDoTasks = tasks.filter(t => t.mustDoToday && t.status === 'open')
   const completedMustDo = tasks.filter(t => t.mustDoToday && t.status === 'done')
+  const atCap = mustDoTasks.length >= MUST_DO_CAP
+
+  function showCapNudge() {
+    setCapNudge(true)
+    setTimeout(() => setCapNudge(false), 4000)
+  }
 
   function handleAdd() {
     const trimmed = input.trim()
     if (!trimmed) return
-    // Add task then pin it
+    if (atCap) { showCapNudge(); return }
     addTask(trimmed)
     setInput('')
-    // The just-added task will be last in list — pin it after next tick
     setTimeout(() => {
       const store = useStore.getState()
       const newTask = [...store.tasks].reverse().find(t => t.title === trimmed && t.mustDoToday === false)
@@ -36,8 +44,12 @@ export function MustDoView() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-rose-700 mb-1">Must Do Today</h1>
-        <p className="text-sm text-gray-500 mb-4">These HAVE to happen today. Keep it short.</p>
+        <h1 className="text-xl font-extrabold text-rose-700 mb-1">⚡ Must Do Today</h1>
+        <p className="text-sm text-gray-500 mb-1">These HAVE to happen today. Keep it short.</p>
+        <p className="text-xs text-gray-400 mb-4">
+          {mustDoTasks.length}/{MUST_DO_CAP} slots used
+          {atCap && <span className="ml-1 text-amber-600 font-semibold">· cap reached — swap one to add more</span>}
+        </p>
 
         <div className="flex gap-2">
           <input
@@ -58,10 +70,20 @@ export function MustDoView() {
         </div>
       </div>
 
+      {/* Cap nudge */}
+      {capNudge && (
+        <div className="mb-4 text-sm font-semibold text-amber-800 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 flex items-center gap-2">
+          <span>⚡</span>
+          <span>You already have 3 must-dos today. Swap one out first!</span>
+        </div>
+      )}
+
       {/* Tip: pin from dump or day view */}
-      <div className="mb-4 text-xs text-gray-400 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
-        Tip: You can also pin any task from Brain Dump or Day View using the 📌 button.
-      </div>
+      {!atCap && (
+        <div className="mb-4 text-xs text-gray-400 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
+          Tip: You can also pin any task from Brain Dump or Day View using the 📌 button.
+        </div>
+      )}
 
       {mustDoTasks.length === 0 && completedMustDo.length === 0 && (
         <div className="text-center py-16 text-gray-400">
@@ -147,7 +169,7 @@ function MustDoTaskRow({
   }
 
   return (
-    <div className="bg-white border border-rose-200 rounded-xl px-4 py-3 flex items-center gap-3 group">
+    <div className="bg-white border-2 border-rose-100 rounded-2xl px-4 py-3 flex items-center gap-3 group shadow-sm hover:border-rose-300 hover:shadow-md transition-all">
       {/* Complete checkbox */}
       <button
         onClick={onComplete}

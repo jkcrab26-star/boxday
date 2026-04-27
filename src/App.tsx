@@ -44,11 +44,11 @@ export default function App() {
   const dayLabel = format(parseISO(selectedDate), 'EEE MMM d')
 
   return (
-    <div className="min-h-dvh flex flex-col bg-[#fafaf8]">
+    <div className="min-h-dvh flex flex-col bg-[#fdf8f0]">
       {/* Top nav */}
-      <header className="h-14 border-b border-gray-200 bg-white flex items-center px-4 gap-2 shrink-0">
+      <header className="h-14 border-b border-amber-100 bg-white flex items-center px-4 gap-2 shrink-0">
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-lg font-bold text-indigo-600 tracking-tight">BoxDay</span>
+          <span className="text-lg font-extrabold text-violet-600 tracking-tight">BoxDay</span>
           <span className="text-xs text-gray-400 hidden sm:inline">{dayLabel}</span>
         </div>
 
@@ -60,14 +60,14 @@ export default function App() {
               className={`
                 relative px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap shrink-0
                 ${view === item.id
-                  ? 'bg-indigo-50 text-indigo-700'
+                  ? 'bg-violet-50 text-violet-700'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }
               `}
             >
               {item.label}
               {item.id === 'dump' && dumpCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-violet-500 text-white text-[10px] rounded-full flex items-center justify-center">
                   {dumpCount > 9 ? '9+' : dumpCount}
                 </span>
               )}
@@ -85,7 +85,7 @@ export default function App() {
           <button
             onClick={() => setView('coins')}
             className={`relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${view === 'coins' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+              ${view === 'coins' ? 'bg-violet-50 text-violet-700' : 'text-gray-600 hover:bg-gray-100'}`}
           >
             <span>🪙</span>
             <span className="font-semibold text-amber-600">{coins.balance}</span>
@@ -101,7 +101,7 @@ export default function App() {
           <button
             onClick={() => setView('settings')}
             className={`px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${view === 'settings' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+              ${view === 'settings' ? 'bg-violet-50 text-violet-700' : 'text-gray-600 hover:bg-gray-100'}`}
             title="Settings"
           >
             ⚙️

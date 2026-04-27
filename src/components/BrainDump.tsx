@@ -4,13 +4,27 @@ import type { Task } from '../types'
 import { estimatedBucket } from '../lib/time'
 
 const BUCKETS = [15, 30, 60, 90] as const
+const MUST_DO_CAP = 3
 
 export function BrainDump() {
   const [input, setInput] = useState('')
+  const [capNudge, setCapNudge] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { tasks, addTask, editTask, deleteTask, setTaskEstimate, scheduleTask, setView, selectedDate, pinToMustDo, unpinFromMustDo } = useStore()
 
   const dumpTasks = tasks.filter(t => t.status === 'open' && !t.scheduledDate)
+  const openMustDoCount = tasks.filter(t => t.mustDoToday && t.status === 'open').length
+
+  function handlePin(task: Task) {
+    if (task.mustDoToday) {
+      unpinFromMustDo(task.id)
+    } else if (openMustDoCount >= MUST_DO_CAP) {
+      setCapNudge(true)
+      setTimeout(() => setCapNudge(false), 4000)
+    } else {
+      pinToMustDo(task.id)
+    }
+  }
 
   useEffect(() => {
     textareaRef.current?.focus()
@@ -42,10 +56,17 @@ export function BrainDump() {
           onKeyDown={handleKeyDown}
           placeholder="What's on your mind? Press Enter to capture."
           rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none text-base leading-relaxed"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none text-base leading-relaxed"
         />
         <p className="text-xs text-gray-400 mt-1">Press Enter to add · Shift+Enter for new line</p>
       </div>
+
+      {capNudge && (
+        <div className="mb-4 text-sm font-semibold text-amber-800 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 flex items-center gap-2">
+          <span>⚡</span>
+          <span>You already have 3 must-dos today. Swap one out first!</span>
+        </div>
+      )}
 
       {dumpTasks.length > 0 && (
         <div>
@@ -55,7 +76,7 @@ export function BrainDump() {
             </h2>
             <button
               onClick={() => setView('day')}
-              className="text-sm text-indigo-600 font-medium hover:text-indigo-800"
+              className="text-sm text-violet-600 font-medium hover:text-violet-800"
             >
               Go to day view →
             </button>
@@ -70,7 +91,7 @@ export function BrainDump() {
                 onBoxToday={() => boxTaskToday(task)}
                 onEdit={(title, minutes) => editTask(task.id, title, minutes, task.horizon)}
                 onDelete={() => deleteTask(task.id)}
-                onPin={() => task.mustDoToday ? unpinFromMustDo(task.id) : pinToMustDo(task.id)}
+                onPin={() => handlePin(task)}
               />
             ))}
           </div>
@@ -115,7 +136,7 @@ function DumpTaskRow({
 
   if (editing) {
     return (
-      <div className="bg-white border-2 border-indigo-300 rounded-xl px-4 py-3 flex items-center gap-2">
+      <div className="bg-white border-2 border-violet-300 rounded-xl px-4 py-3 flex items-center gap-2">
         <input
           autoFocus
           type="text"
@@ -127,17 +148,17 @@ function DumpTaskRow({
           }}
           className="flex-1 text-sm text-gray-900 bg-transparent outline-none"
         />
-        <button onClick={saveEdit} className="text-xs text-indigo-600 font-medium px-2 py-1 hover:bg-indigo-50 rounded-lg">Save</button>
+        <button onClick={saveEdit} className="text-xs text-violet-600 font-medium px-2 py-1 hover:bg-violet-50 rounded-lg">Save</button>
         <button onClick={() => setEditing(false)} className="text-xs text-gray-400 px-2 py-1 hover:bg-gray-50 rounded-lg">Cancel</button>
       </div>
     )
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-2 group">
+    <div className="bg-white border border-amber-100 rounded-2xl px-4 py-3 flex items-center gap-2 group shadow-sm hover:shadow-md hover:border-violet-200 transition-all">
       <div className="flex-1 min-w-0">
         <p
-          className="text-gray-900 text-sm truncate cursor-pointer hover:text-indigo-700"
+          className="text-gray-900 text-sm truncate cursor-pointer hover:text-violet-700"
           onClick={() => setEditing(true)}
           title="Click to edit"
         >
@@ -160,7 +181,7 @@ function DumpTaskRow({
               <button
                 key={b}
                 onClick={() => { onBucket(b); setShowBuckets(false) }}
-                className="text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 font-mono text-gray-700"
+                className="text-xs px-2 py-1.5 rounded-lg hover:bg-violet-50 hover:text-violet-700 font-mono text-gray-700"
               >
                 {b < 60 ? `${b}m` : `${b / 60}h`}
               </button>
@@ -203,7 +224,7 @@ function DumpTaskRow({
       {/* Box to today */}
       <button
         onClick={onBoxToday}
-        className="text-xs text-indigo-600 font-medium bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg whitespace-nowrap shrink-0"
+        className="text-xs text-violet-600 font-medium bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg whitespace-nowrap shrink-0"
       >
         Box today
       </button>

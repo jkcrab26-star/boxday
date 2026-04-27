@@ -15,7 +15,7 @@ export function CoinsView() {
     <div className="max-w-lg mx-auto px-4 py-6">
       {/* Balance hero */}
       <div className="text-center mb-8">
-        <div className="text-6xl font-bold text-indigo-600 mb-1">
+        <div className="text-6xl font-bold text-violet-600 mb-1">
           {coins.balance}
         </div>
         <div className="text-sm text-gray-500">coins earned</div>
@@ -24,16 +24,16 @@ export function CoinsView() {
         </div>
         <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5 max-w-xs mx-auto">
           <div
-            className="bg-indigo-500 h-1.5 rounded-full transition-all"
+            className="bg-violet-500 h-1.5 rounded-full transition-all"
             style={{ width: `${Math.min(100, (coins.todayEarned / DAILY_CAP) * 100)}%` }}
           />
         </div>
       </div>
 
       {/* How to earn */}
-      <div className="bg-indigo-50 dark:bg-indigo-950 rounded-xl p-4 mb-6 text-sm">
-        <p className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">How to earn</p>
-        <ul className="space-y-1 text-indigo-700 dark:text-indigo-300 text-xs">
+      <div className="bg-violet-50 dark:bg-violet-950 rounded-xl p-4 mb-6 text-sm">
+        <p className="font-medium text-violet-900 dark:text-violet-100 mb-2">How to earn</p>
+        <ul className="space-y-1 text-violet-700 dark:text-violet-300 text-xs">
           <li>✓ Complete any task: <strong>+{EARN_RATES.task} coins</strong></li>
           <li>▶ Complete via Focus Mode: <strong>+{EARN_RATES.box} bonus coins</strong> (= +{EARN_RATES.task + EARN_RATES.box} total)</li>
           <li>⚡ Daily cap: <strong>{DAILY_CAP} coins</strong> (keeps it healthy)</li>
@@ -71,7 +71,7 @@ export function CoinsView() {
                 <p className="text-[10px] text-gray-400">{TX_LABELS[tx.type]}</p>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-xs font-semibold text-indigo-600">+{tx.amount}</span>
+                <span className="text-xs font-semibold text-violet-600">+{tx.amount}</span>
                 <p className="text-[10px] text-gray-400">
                   {format(parseISO(tx.earnedAt), 'MMM d, h:mm a')}
                 </p>
