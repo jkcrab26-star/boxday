@@ -1,0 +1,37 @@
+{
+  "topic": 1,
+  "title": "Why ADHD Brains Can't Just Start Tasks",
+  "voiceId": "21m00Tcm4TlvDq8ikWAM",
+  "shots": [
+    {
+      "id": "hook",
+      "voiceover": "If someone tells you to just start, they have no idea how your brain actually works.",
+      "textOverlay": "\"just start\" <- ADHD brains literally can't",
+      "brollSearch": "person desk frustrated staring"
+    },
+    {
+      "id": "struggle",
+      "voiceover": "You've got a task due in an hour. You know it. You care. And yet you're watching a video about why you can't start the task.",
+      "textOverlay": "this is not laziness",
+      "brollSearch": "phone scrolling distracted desk"
+    },
+    {
+      "id": "science",
+      "voiceover": "Here's what's actually happening. ADHD brains have a dopamine deficit in the prefrontal cortex — the part that handles task initiation. Neurotypical brains get a small dopamine hit just from deciding to start something. ADHD brains don't. You get the hit when the task is either urgent, interesting, or rewarding. Until one of those three conditions is met, your brain literally will not fire the start signal.",
+      "textOverlay": "urgent | interesting | rewarding <- pick one",
+      "brollSearch": "brain neuroscience focus concentration"
+    },
+    {
+      "id": "tip",
+      "voiceover": "So the trick isn't motivation. It's manufacturing one of those three conditions. Make a fake deadline. Find the interesting angle of the boring task. Or build in a reward that fires before you finish, not after.",
+      "textOverlay": "reward that fires BEFORE you finish <- key",
+      "brollSearch": "productivity planning notebook writing"
+    },
+    {
+      "id": "cta",
+      "voiceover": "That last one is exactly why we built BoxDay. Get early access — link in bio.",
+      "textOverlay": "link in bio -> early access",
+      "brollSearch": "phone app mobile productivity"
+    }
+  ]
+}
