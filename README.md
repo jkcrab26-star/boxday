@@ -1,4 +1,4 @@
-# BoxDay
+# 80HD
 
 **Box your day. Build your brain.**
 

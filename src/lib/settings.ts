@@ -11,7 +11,7 @@ export interface AppSettings {
   openaiApiKey: string         // BYOK — user's own OpenAI key (optional)
 }
 
-const SETTINGS_KEY = 'boxday_settings'
+const SETTINGS_KEY = '80hd_settings'
 
 export const DEFAULT_SETTINGS: AppSettings = {
   dayStartHour: 8,

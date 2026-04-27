@@ -48,7 +48,7 @@ export default function App() {
       {/* Top nav */}
       <header className="h-14 border-b border-amber-100 bg-white flex items-center px-4 gap-2 shrink-0">
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-lg font-extrabold text-violet-600 tracking-tight">BoxDay</span>
+          <img src="/we80hd-logo.svg" alt="80HD" className="h-6" />
           <span className="text-xs text-gray-400 hidden sm:inline">{dayLabel}</span>
         </div>
 

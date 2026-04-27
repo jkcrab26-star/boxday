@@ -18,7 +18,7 @@ export function Settings() {
   const [showOpenAIKey, setShowOpenAIKey] = useState(false)
 
   function confirmClearData() {
-    if (window.confirm('Clear all BoxDay data? This cannot be undone.')) {
+    if (window.confirm('Clear all 80HD data? This cannot be undone.')) {
       clearAllData()
     }
   }
@@ -33,7 +33,7 @@ export function Settings() {
           AI Time-Boxing (optional)
         </h2>
         <p className="text-xs text-gray-400 mb-3">
-          BoxDay uses smart heuristics by default — free, no key needed. Add your own key to unlock real AI suggestions.
+          80HD uses smart heuristics by default — free, no key needed. Add your own key to unlock real AI suggestions.
         </p>
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-800">
           <Row label="Anthropic API Key">
@@ -72,7 +72,7 @@ export function Settings() {
           </Row>
           <div className="px-4 py-2">
             <p className="text-[10px] text-gray-400">
-              Keys are stored only on this device. BoxDay never sends them to our servers.
+              Keys are stored only on this device. 80HD never sends them to our servers.
               {settings.anthropicApiKey || settings.openaiApiKey
                 ? ' ✓ Your key is active — AI suggestions enabled.'
                 : ' Using round-robin fallback (free).'}
@@ -214,7 +214,7 @@ export function Settings() {
       </section>
 
       <p className="text-xs text-gray-400 text-center pb-6">
-        BoxDay · All data stored locally on this device
+        80HD · All data stored locally on this device
       </p>
     </div>
   )

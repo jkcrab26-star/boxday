@@ -1,7 +1,7 @@
 import type { Task } from '../types'
 
-const TASKS_KEY = 'boxday_tasks'
-const RESET_KEY = 'boxday_last_reset'
+const TASKS_KEY = '80hd_tasks'
+const RESET_KEY = '80hd_last_reset'
 
 export function loadTasks(): Task[] {
   try {

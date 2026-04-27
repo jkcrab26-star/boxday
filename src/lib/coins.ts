@@ -24,7 +24,7 @@ export const EARN_RATES = {
 
 export const DAILY_CAP = 200
 
-const COINS_KEY = 'boxday_coins'
+const COINS_KEY = '80hd_coins'
 
 function emptyLedger(): CoinLedger {
   return { balance: 0, transactions: [], todayDate: '', todayEarned: 0 }
