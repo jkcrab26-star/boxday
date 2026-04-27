@@ -1,6 +1,6 @@
 export type Horizon = 'day' | 'week' | 'month'
 export type TaskStatus = 'open' | 'done' | 'snoozed'
-export type View = 'dump' | 'day' | 'week' | 'month'
+export type View = 'dump' | 'day' | 'week' | 'month' | 'coins' | 'settings' | 'mustdo'
 
 export interface Task {
   id: string
@@ -10,5 +10,7 @@ export interface Task {
   scheduledTime: string | null  // "HH:MM" 24h format
   horizon: Horizon
   status: TaskStatus
+  mustDoToday: boolean          // pinned to Must Do Today tab
   createdAt: string             // ISO timestamp
+  completedAt?: string          // ISO timestamp, set when status → done
 }

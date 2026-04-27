@@ -21,13 +21,29 @@ export function shouldReset(lastResetDate: string | null): boolean {
 }
 
 // Returns array of 30-min slot labels: ["08:00","08:30",..."22:00"]
-export function getSlots(): string[] {
+export function getSlots(startHour = 8, endHour = 22): string[] {
   const slots: string[] = []
-  for (let h = 8; h <= 22; h++) {
+  for (let h = startHour; h <= endHour; h++) {
     slots.push(`${String(h).padStart(2, '0')}:00`)
-    if (h < 22) slots.push(`${String(h).padStart(2, '0')}:30`)
+    if (h < endHour) slots.push(`${String(h).padStart(2, '0')}:30`)
   }
   return slots
+}
+
+// Returns section label for a given slot hour based on boundary settings
+export function getSectionLabel(
+  slot: string,
+  afternoonStart: number,
+  eveningStart: number,
+  startHour: number
+): string | null {
+  const h = parseInt(slot.split(':')[0], 10)
+  const isOnHour = slot.endsWith(':00')
+  if (!isOnHour) return null
+  if (h === startHour) return 'Morning'
+  if (h === afternoonStart) return 'Afternoon'
+  if (h === eveningStart) return 'Evening'
+  return null
 }
 
 export function formatSlot(slot: string): string {

@@ -9,13 +9,13 @@ import {
 } from '@dnd-kit/core'
 import { useStore } from '../store'
 import type { Task } from '../types'
-import { getSlots, formatSlot, estimatedBucket } from '../lib/time'
-
-const SLOTS = getSlots()
+import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/time'
 
 export function DayView() {
-  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus } = useStore()
+  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, pinToMustDo, unpinFromMustDo, settings } = useStore()
+  const SLOTS = getSlots(settings.dayStartHour, 22)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   const scheduledTasks = tasks.filter(
     t => t.status === 'open' && t.scheduledDate === selectedDate
@@ -64,7 +64,7 @@ export function DayView() {
       <div className="flex gap-0 h-[calc(100dvh-56px)] overflow-hidden">
         {/* Time grid */}
         <div className="flex-1 overflow-y-auto">
-          {/* Busy day indicator — non-shaming per Doc's red line 1 */}
+          {/* Busy day indicator */}
           {busyHours > 8 && (
             <div className="mx-4 mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
               Busy day — consider moving some tasks to another day
@@ -72,14 +72,27 @@ export function DayView() {
           )}
 
           <div className="pb-6">
-            {SLOTS.map(slot => (
-              <TimeSlot
-                key={slot}
-                slot={slot}
-                tasks={getTasksForSlot(slot)}
-                onFocus={startFocus}
-              />
-            ))}
+            {SLOTS.map(slot => {
+              const sectionLabel = getSectionLabel(slot, settings.afternoonStartHour, settings.eveningStartHour, settings.dayStartHour)
+              return (
+                <div key={slot}>
+                  {sectionLabel && (
+                    <div className="px-4 pt-3 pb-1">
+                      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{sectionLabel}</span>
+                    </div>
+                  )}
+                  <TimeSlot
+                    slot={slot}
+                    tasks={getTasksForSlot(slot)}
+                    onFocus={startFocus}
+                    onComplete={completeTask}
+                    onEdit={(id) => setEditingId(id)}
+                    onDelete={deleteTask}
+                    onPin={(id, pinned) => pinned ? unpinFromMustDo(id) : pinToMustDo(id)}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
 
@@ -88,6 +101,10 @@ export function DayView() {
           <UnscheduledPile
             tasks={[...getUnscheduledForGrid(), ...unscheduledTasks]}
             onFocus={startFocus}
+            onComplete={completeTask}
+            onEdit={(id) => setEditingId(id)}
+            onDelete={deleteTask}
+            onPin={(id, pinned) => pinned ? unpinFromMustDo(id) : pinToMustDo(id)}
           />
 
           {doneTasks.length > 0 && (
@@ -114,14 +131,86 @@ export function DayView() {
           </div>
         )}
       </DragOverlay>
+
+      {/* Edit modal */}
+      {editingId && (
+        <EditModal
+          task={tasks.find(t => t.id === editingId)!}
+          onSave={(title, minutes) => {
+            const task = tasks.find(t => t.id === editingId)
+            if (task) editTask(editingId, title, minutes, task.horizon)
+            setEditingId(null)
+          }}
+          onClose={() => setEditingId(null)}
+        />
+      )}
     </DndContext>
   )
 }
 
-function TimeSlot({ slot, tasks, onFocus }: {
+function EditModal({ task, onSave, onClose }: {
+  task: Task
+  onSave: (title: string, minutes: number | null) => void
+  onClose: () => void
+}) {
+  const [title, setTitle] = useState(task.title)
+  const [minutes, setMinutes] = useState<string>(String(task.estimatedMinutes ?? 30))
+  const BUCKETS = [15, 25, 30, 45, 60, 90]
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl p-5 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Edit Task</h3>
+        <input
+          autoFocus
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') onSave(title, Number(minutes) || null) }}
+          className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <p className="text-xs text-gray-500 mb-2">Duration</p>
+        <div className="flex gap-1 flex-wrap mb-4">
+          {BUCKETS.map(b => (
+            <button
+              key={b}
+              onClick={() => setMinutes(String(b))}
+              className={`px-2 py-1 text-xs rounded-lg font-mono ${
+                Number(minutes) === b ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {b < 60 ? `${b}m` : `${b / 60}h`}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onSave(title, Number(minutes) || null)}
+            disabled={!title.trim()}
+            className="flex-1 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-medium disabled:opacity-40"
+          >
+            Save
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TimeSlot({ slot, tasks, onFocus, onComplete, onEdit, onDelete, onPin }: {
   slot: string
   tasks: Task[]
   onFocus: (id: string) => void
+  onComplete: (id: string) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+  onPin: (id: string, currentlyPinned: boolean) => void
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: `slot:${slot}` })
   const isHalfHour = slot.endsWith(':30')
@@ -140,14 +229,29 @@ function TimeSlot({ slot, tasks, onFocus }: {
       </div>
       <div className="flex-1 flex flex-wrap gap-1 py-1">
         {tasks.map(task => (
-          <DraggableTaskChip key={task.id} task={task} onFocus={onFocus} />
+          <DraggableTaskChip
+            key={task.id}
+            task={task}
+            onFocus={onFocus}
+            onComplete={onComplete}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onPin={onPin}
+          />
         ))}
       </div>
     </div>
   )
 }
 
-function UnscheduledPile({ tasks, onFocus }: { tasks: Task[]; onFocus: (id: string) => void }) {
+function UnscheduledPile({ tasks, onFocus, onComplete, onEdit, onDelete, onPin }: {
+  tasks: Task[]
+  onFocus: (id: string) => void
+  onComplete: (id: string) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+  onPin: (id: string, currentlyPinned: boolean) => void
+}) {
   const { setNodeRef, isOver } = useDroppable({ id: 'unscheduled-pile' })
 
   return (
@@ -163,7 +267,16 @@ function UnscheduledPile({ tasks, onFocus }: { tasks: Task[]; onFocus: (id: stri
       ) : (
         <div className="space-y-1">
           {tasks.map(task => (
-            <DraggableTaskChip key={task.id} task={task} onFocus={onFocus} sidebar />
+            <DraggableTaskChip
+              key={task.id}
+              task={task}
+              onFocus={onFocus}
+              onComplete={onComplete}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onPin={onPin}
+              sidebar
+            />
           ))}
         </div>
       )}
@@ -171,37 +284,93 @@ function UnscheduledPile({ tasks, onFocus }: { tasks: Task[]; onFocus: (id: stri
   )
 }
 
-function DraggableTaskChip({ task, onFocus, sidebar = false }: {
+function DraggableTaskChip({ task, onFocus, onComplete, onEdit, onDelete, onPin, sidebar = false }: {
   task: Task
   onFocus: (id: string) => void
+  onComplete: (id: string) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+  onPin: (id: string, currentlyPinned: boolean) => void
   sidebar?: boolean
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: task.id })
+  const [showActions, setShowActions] = useState(false)
 
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       className={`
-        flex items-center gap-1 bg-white border border-gray-200 rounded-lg
-        cursor-grab active:cursor-grabbing select-none
+        group relative flex items-center gap-1 bg-white border rounded-lg
+        select-none
+        ${task.mustDoToday ? 'border-rose-300' : 'border-gray-200'}
         ${isDragging ? 'opacity-40' : 'hover:border-indigo-300 hover:shadow-sm'}
         ${sidebar ? 'px-2 py-1.5 text-xs w-full' : 'px-2 py-1 text-xs'}
       `}
     >
-      <span className="flex-1 truncate text-gray-800">{task.title}</span>
-      <span className="text-gray-400 font-mono shrink-0">
-        {estimatedBucket(task.estimatedMinutes)}
+      {/* Drag handle area */}
+      <span
+        {...listeners}
+        {...attributes}
+        className="cursor-grab active:cursor-grabbing flex-1 flex items-center gap-1 min-w-0"
+      >
+        {task.mustDoToday && <span className="text-rose-400 shrink-0" title="Must Do Today">📌</span>}
+        <span className="flex-1 truncate text-gray-800">{task.title}</span>
+        <span className="text-gray-400 font-mono shrink-0">
+          {estimatedBucket(task.estimatedMinutes)}
+        </span>
       </span>
+
       {!isDragging && (
-        <button
-          onClick={e => { e.stopPropagation(); onFocus(task.id) }}
-          className="ml-1 text-indigo-500 hover:text-indigo-700 shrink-0"
-          title="Start focus"
-        >
-          ▶
-        </button>
+        <div className="flex items-center gap-0.5 shrink-0">
+          {/* Complete */}
+          <button
+            onClick={e => { e.stopPropagation(); onComplete(task.id) }}
+            className="text-green-500 hover:text-green-700 px-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Mark done"
+          >
+            ✓
+          </button>
+          {/* Focus */}
+          <button
+            onClick={e => { e.stopPropagation(); onFocus(task.id) }}
+            className="text-indigo-500 hover:text-indigo-700 shrink-0"
+            title="Start focus"
+          >
+            ▶
+          </button>
+          {/* More actions */}
+          <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={e => { e.stopPropagation(); setShowActions(s => !s) }}
+              className="text-gray-400 hover:text-gray-700 px-0.5"
+              title="More"
+            >
+              ···
+            </button>
+            {showActions && (
+              <div className="absolute right-0 top-6 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[120px]">
+                <button
+                  onClick={() => { onEdit(task.id); setShowActions(false) }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  onClick={() => { onPin(task.id, task.mustDoToday); setShowActions(false) }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-rose-50"
+                >
+                  📌 {task.mustDoToday ? 'Unpin Must Do' : 'Must Do Today'}
+                </button>
+                <button
+                  onClick={() => { onDelete(task.id); setShowActions(false) }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-red-600 hover:bg-red-50"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )

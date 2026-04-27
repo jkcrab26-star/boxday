@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../store'
 
 export function FocusMode() {
-  const { tasks, focusSession, completeTask, snoozeTask, dismissTask } = useStore()
+  const { tasks, focusSession, completeTask, snoozeTask, dismissTask, settings } = useStore()
   const session = focusSession!
   const task = tasks.find(t => t.id === session.taskId)
 
@@ -26,8 +26,8 @@ export function FocusMode() {
 
   return (
     <div
-      className="ambient-pulse fixed inset-0 flex flex-col items-center justify-center z-50 px-6"
-      style={{ '--pulse-duration': `${pulseDurationSec}s` } as React.CSSProperties}
+      className={`${settings.ambientPulse ? 'ambient-pulse' : 'bg-[#f0f4ff]'} fixed inset-0 flex flex-col items-center justify-center z-50 px-6`}
+      style={settings.ambientPulse ? { '--pulse-duration': `${pulseDurationSec}s` } as React.CSSProperties : undefined}
     >
       <div className="w-full max-w-md">
         {/* Timer */}

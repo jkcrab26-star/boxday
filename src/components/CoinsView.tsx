@@ -1,0 +1,86 @@
+import { useStore } from '../store'
+import { format, parseISO } from '../lib/time'
+import { EARN_RATES, DAILY_CAP } from '../lib/coins'
+
+const TX_LABELS: Record<string, string> = {
+  task: `+${EARN_RATES.task} — task complete`,
+  box: `+${EARN_RATES.box} — focus box complete`,
+  day_first: `+${EARN_RATES.day_first} — first completion today`,
+}
+
+export function CoinsView() {
+  const { coins } = useStore()
+
+  return (
+    <div className="max-w-lg mx-auto px-4 py-6">
+      {/* Balance hero */}
+      <div className="text-center mb-8">
+        <div className="text-6xl font-bold text-indigo-600 mb-1">
+          {coins.balance}
+        </div>
+        <div className="text-sm text-gray-500">coins earned</div>
+        <div className="mt-4 text-xs text-gray-400">
+          Today: {coins.todayEarned} / {DAILY_CAP} daily cap
+        </div>
+        <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5 max-w-xs mx-auto">
+          <div
+            className="bg-indigo-500 h-1.5 rounded-full transition-all"
+            style={{ width: `${Math.min(100, (coins.todayEarned / DAILY_CAP) * 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* How to earn */}
+      <div className="bg-indigo-50 dark:bg-indigo-950 rounded-xl p-4 mb-6 text-sm">
+        <p className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">How to earn</p>
+        <ul className="space-y-1 text-indigo-700 dark:text-indigo-300 text-xs">
+          <li>▶ Start a focus block → complete it: <strong>+3 coins</strong></li>
+          <li>✓ Complete any task: <strong>+1 coin</strong></li>
+          <li>☀️ First completion of the day: <strong>+10 bonus</strong></li>
+          <li>⚡ Daily cap: <strong>{DAILY_CAP} coins</strong> (keeps it healthy)</li>
+        </ul>
+      </div>
+
+      {/* Redemption stub */}
+      <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+        <p className="font-medium text-amber-900 dark:text-amber-100 text-sm mb-1">🎁 Prizes coming soon</p>
+        <p className="text-xs text-amber-700 dark:text-amber-300">
+          Redeem coins for free Pro months, discounts, and more. On-chain settlement launches post-v0. Your balance is safe.
+        </p>
+      </div>
+
+      {/* Earn history */}
+      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+        Earn history
+      </h2>
+
+      {coins.transactions.length === 0 ? (
+        <div className="text-center py-12 text-gray-400">
+          <p className="text-3xl mb-2">🪙</p>
+          <p className="text-sm">Complete your first task to earn coins.</p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {coins.transactions.map(tx => (
+            <div
+              key={tx.id}
+              className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-4 py-2.5"
+            >
+              <span className="text-lg">{tx.type === 'box' ? '🎯' : tx.type === 'day_first' ? '☀️' : '✓'}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{tx.taskTitle}</p>
+                <p className="text-[10px] text-gray-400">{TX_LABELS[tx.type]}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="text-xs font-semibold text-indigo-600">+{tx.amount}</span>
+                <p className="text-[10px] text-gray-400">
+                  {format(parseISO(tx.earnedAt), 'MMM d, h:mm a')}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
