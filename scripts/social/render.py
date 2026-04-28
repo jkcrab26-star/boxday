@@ -41,12 +41,13 @@ FONTS = {
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 WHITE      = (255, 255, 255, 255)
-GRAY       = (230, 225, 245, 255)   # bright purple-tinted for secondary lines
-DIMGRAY    = (200, 195, 220, 255)
-BG_DARK    = (28, 20, 55)           # deep purple (readable contrast)
-BG_DARKER  = (18, 12, 40)          # dark purple
-BG_ACCENT  = (45, 25, 80)          # medium purple for emphasis shots
-WATERMARK_ALPHA = 180              # brighter watermark
+DARK_TEXT  = (30, 15, 60, 255)      # deep purple for main text on light bg
+GRAY       = (90, 70, 130, 255)     # medium purple for secondary text
+DIMGRAY    = (130, 110, 160, 255)   # lighter purple for tertiary text
+BG_DARK    = (235, 225, 255)        # soft lavender
+BG_DARKER  = (248, 244, 255)        # near white with purple tint
+BG_ACCENT  = (215, 200, 248)        # medium lavender for emphasis shots
+WATERMARK_ALPHA = 200
 
 # ── Shot definitions ──────────────────────────────────────────────────────────
 # Each shot: dur(s), bg keyword, list of (text, font_key, color_rgba, y_bias)
@@ -55,9 +56,9 @@ SHOTS = [
     {
         "dur": 3, "bg": "dark",
         "lines": [
-            ("wanting", "hero", WHITE, -0.06),
+            ("wanting", "hero", DARK_TEXT, -0.06),
             ("≠", "subhero", GRAY, 0.0),
-            ("starting", "hero", WHITE, 0.06),
+            ("starting", "hero", DARK_TEXT, 0.06),
         ],
     },
     {
@@ -69,7 +70,7 @@ SHOTS = [
     {
         "dur": 6, "bg": "darker",
         "lines": [
-            ("40 minutes.", "hero", WHITE, -0.05),
+            ("40 minutes.", "hero", DARK_TEXT, -0.05),
             ("same tab.", "hero", GRAY, 0.05),
         ],
     },
@@ -77,28 +78,28 @@ SHOTS = [
         "dur": 8, "bg": "accent",
         "lines": [
             ("the", "subtitle", GRAY, -0.06),
-            ("dopamine gap", "hero", WHITE, 0.03),
+            ("dopamine gap", "hero", DARK_TEXT, 0.03),
         ],
     },
     {
         "dur": 10, "bg": "darker",
         "lines": [
-            ("PFC needs a signal", "subtitle", WHITE, -0.04),
-            ("to start", "hero", WHITE, 0.06),
+            ("PFC needs a signal", "subtitle", DARK_TEXT, -0.04),
+            ("to start", "hero", DARK_TEXT, 0.06),
         ],
     },
     {
         "dur": 8, "bg": "dark",
         "lines": [
             ("low interest =", "body", GRAY, -0.08),
-            ("low dopamine", "subtitle", WHITE, 0.0),
+            ("low dopamine", "subtitle", DARK_TEXT, 0.0),
             ("= no bridge", "body", GRAY, 0.08),
         ],
     },
     {
         "dur": 8, "bg": "darker",
         "lines": [
-            ("seeing ≠ starting", "hero", WHITE, -0.05),
+            ("seeing ≠ starting", "hero", DARK_TEXT, -0.05),
             ("that's neurobiology,", "small", GRAY, 0.05),
             ("not procrastination", "small", DIMGRAY, 0.1),
         ],
@@ -106,25 +107,25 @@ SHOTS = [
     {
         "dur": 9, "bg": "accent",
         "lines": [
-            ("small task.", "subtitle", WHITE, -0.08),
-            ("visible end.", "subtitle", WHITE, 0.0),
-            ("finite.", "hero", WHITE, 0.1),
+            ("small task.", "subtitle", DARK_TEXT, -0.08),
+            ("visible end.", "subtitle", DARK_TEXT, 0.0),
+            ("finite.", "hero", DARK_TEXT, 0.1),
         ],
     },
     {
         "dur": 8, "bg": "dark",
         "lines": [
             ("not 'work on this'", "body", GRAY, -0.1),
-            ("'work on this for 25 min,", "small", WHITE, 0.0),
-            ("then you're done.'", "small", WHITE, 0.07),
+            ("'work on this for 25 min,", "small", DARK_TEXT, 0.0),
+            ("then you're done.'", "small", DARK_TEXT, 0.07),
         ],
     },
     {
         "dur": 7, "bg": "darker",
         "lines": [
             ("the end in sight =", "body", GRAY, -0.1),
-            ("dopamine fires =", "body", WHITE, 0.0),
-            ("you start", "hero", WHITE, 0.1),
+            ("dopamine fires =", "body", DARK_TEXT, 0.0),
+            ("you start", "hero", DARK_TEXT, 0.1),
         ],
     },
     {
@@ -243,8 +244,8 @@ def add_watermark(img):
     th = bbox[3] - bbox[1]
     x = W - tw - 48
     y = H - th - 80
-    draw.text((x + 1, y + 1), text, font=font, fill=(0, 0, 0, 60))
-    draw.text((x, y), text, font=font, fill=(255, 255, 255, WATERMARK_ALPHA))
+    draw.text((x + 1, y + 1), text, font=font, fill=(255, 255, 255, 40))
+    draw.text((x, y), text, font=font, fill=(30, 15, 60, WATERMARK_ALPHA))
     return img
 
 
