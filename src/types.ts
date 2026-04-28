@@ -1,6 +1,6 @@
 export type Horizon = 'day' | 'week' | 'month'
 export type TaskStatus = 'open' | 'done' | 'snoozed'
-export type View = 'dump' | 'day' | 'week' | 'month' | 'coins' | 'settings' | 'mustdo'
+export type View = 'dump' | 'day' | 'week' | 'month' | 'coins' | 'settings' | 'mustdo' | 'privacy' | 'terms'
 
 export interface Task {
   id: string

@@ -8,6 +8,8 @@ import { FocusMode } from './components/FocusMode'
 import { CoinsView } from './components/CoinsView'
 import { Settings } from './components/Settings'
 import { MustDoView } from './components/MustDoView'
+import { PrivacyPolicy } from './components/PrivacyPolicy'
+import { TermsOfService } from './components/TermsOfService'
 import { format, parseISO } from './lib/time'
 import type { View } from './types'
 
@@ -118,7 +120,36 @@ export default function App() {
         {view === 'month' && <MonthView />}
         {view === 'coins' && <CoinsView />}
         {view === 'settings' && <Settings />}
+        {view === 'privacy' && (
+          <div className="h-full overflow-y-auto bg-white">
+            <PrivacyPolicy />
+          </div>
+        )}
+        {view === 'terms' && (
+          <div className="h-full overflow-y-auto bg-white">
+            <TermsOfService />
+          </div>
+        )}
       </main>
+
+      {/* Footer — always visible, no login required */}
+      {view !== 'privacy' && view !== 'terms' && (
+        <footer className="shrink-0 border-t border-amber-100 bg-white px-4 py-2 flex justify-center gap-4 text-xs text-gray-400">
+          <a
+            href="/boxday/privacy/"
+            className="hover:text-violet-600 transition-colors"
+          >
+            Privacy Policy
+          </a>
+          <span>·</span>
+          <a
+            href="/boxday/terms/"
+            className="hover:text-violet-600 transition-colors"
+          >
+            Terms of Service
+          </a>
+        </footer>
+      )}
 
       {/* Focus mode overlay */}
       {focusSession && <FocusMode />}
