@@ -20,7 +20,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 W, H = 1080, 1920
 FPS = 30
 MARGIN_H = 80          # horizontal safe margin
+MARGIN_V = 220         # vertical safe margin — keeps text away from top/bottom UI chrome
 TEXT_W = W - 2 * MARGIN_H
+TEXT_H = H - 2 * MARGIN_V  # usable vertical area
 
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 FONT_PATH = "/System/Library/Fonts/HelveticaNeue.ttc"
@@ -30,13 +32,13 @@ def fnt(size, weight="bold"):
     return ImageFont.truetype(FONT_PATH, size=size, index=FONT_IDX[weight])
 
 FONTS = {
-    "hero":     fnt(148, "bold"),
-    "subhero":  fnt(120, "bold"),
-    "subtitle": fnt(96,  "medium"),
-    "body":     fnt(80,  "regular"),
-    "small":    fnt(70,  "regular"),
-    "watermark":fnt(48,  "light"),
-    "brand":    fnt(156, "bold"),
+    "hero":     fnt(130, "bold"),
+    "subhero":  fnt(104, "bold"),
+    "subtitle": fnt(84,  "medium"),
+    "body":     fnt(70,  "regular"),
+    "small":    fnt(62,  "regular"),
+    "watermark":fnt(44,  "light"),
+    "brand":    fnt(136, "bold"),
 }
 
 # ── Colors ────────────────────────────────────────────────────────────────────
@@ -222,7 +224,8 @@ def render_text_on_img(img, line_specs):
         line_heights = [text_height(font, ln) for ln in wrapped]
         line_spacing = 16
         block_h = sum(line_heights) + line_spacing * (len(wrapped) - 1)
-        cy = int(H / 2 + y_bias * H) - block_h // 2
+        cy = int(H / 2 + y_bias * TEXT_H) - block_h // 2
+        cy = max(MARGIN_V, min(cy, H - MARGIN_V - block_h))
         for i, ln in enumerate(wrapped):
             bbox = font.getbbox(ln)
             lw = bbox[2] - bbox[0]
