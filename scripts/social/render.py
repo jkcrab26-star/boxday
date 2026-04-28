@@ -30,13 +30,13 @@ def fnt(size, weight="bold"):
     return ImageFont.truetype(FONT_PATH, size=size, index=FONT_IDX[weight])
 
 FONTS = {
-    "hero":     fnt(110, "bold"),
-    "subhero":  fnt(88,  "bold"),
-    "subtitle": fnt(70,  "medium"),
-    "body":     fnt(58,  "regular"),
-    "small":    fnt(52,  "regular"),
-    "watermark":fnt(38,  "light"),
-    "brand":    fnt(116, "bold"),
+    "hero":     fnt(148, "bold"),
+    "subhero":  fnt(120, "bold"),
+    "subtitle": fnt(96,  "medium"),
+    "body":     fnt(80,  "regular"),
+    "small":    fnt(70,  "regular"),
+    "watermark":fnt(48,  "light"),
+    "brand":    fnt(156, "bold"),
 }
 
 # ── Colors ────────────────────────────────────────────────────────────────────
