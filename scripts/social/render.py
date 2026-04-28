@@ -30,23 +30,23 @@ def fnt(size, weight="bold"):
     return ImageFont.truetype(FONT_PATH, size=size, index=FONT_IDX[weight])
 
 FONTS = {
-    "hero":     fnt(92,  "bold"),
-    "subhero":  fnt(72,  "bold"),
-    "subtitle": fnt(56,  "medium"),
-    "body":     fnt(48,  "light"),
-    "small":    fnt(42,  "regular"),
-    "watermark":fnt(34,  "light"),
-    "brand":    fnt(100, "bold"),
+    "hero":     fnt(110, "bold"),
+    "subhero":  fnt(88,  "bold"),
+    "subtitle": fnt(70,  "medium"),
+    "body":     fnt(58,  "regular"),
+    "small":    fnt(52,  "regular"),
+    "watermark":fnt(38,  "light"),
+    "brand":    fnt(116, "bold"),
 }
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 WHITE      = (255, 255, 255, 255)
-GRAY       = (195, 190, 210, 255)   # purple-tinted gray for secondary lines
-DIMGRAY    = (150, 145, 165, 255)
-BG_DARK    = (11, 8, 20)            # #0b0814 deep purple-black
-BG_DARKER  = (8, 6, 14)            # near black
-BG_ACCENT  = (16, 10, 28)          # slightly lighter purple for emphasis shots
-WATERMARK_ALPHA = 100              # 0-255
+GRAY       = (230, 225, 245, 255)   # bright purple-tinted for secondary lines
+DIMGRAY    = (200, 195, 220, 255)
+BG_DARK    = (28, 20, 55)           # deep purple (readable contrast)
+BG_DARKER  = (18, 12, 40)          # dark purple
+BG_ACCENT  = (45, 25, 80)          # medium purple for emphasis shots
+WATERMARK_ALPHA = 180              # brighter watermark
 
 # ── Shot definitions ──────────────────────────────────────────────────────────
 # Each shot: dur(s), bg keyword, list of (text, font_key, color_rgba, y_bias)
