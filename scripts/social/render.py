@@ -131,9 +131,11 @@ SHOTS = [
         ],
     },
     {
-        "dur": 5, "bg": "warm_gradient",
+        "dur": 5, "bg": "accent",
         "lines": [
-            ("follow @we80hd", "brand", (20, 10, 0, 255), 0.0),
+            ("follow for", "subtitle", GRAY, -0.1),
+            ("more ADHD", "hero", DARK_TEXT, 0.02),
+            ("science.", "hero", DARK_TEXT, 0.16),
         ],
     },
 ]
@@ -141,18 +143,65 @@ SHOTS = [
 assert sum(s["dur"] for s in SHOTS) == 75, "shot durations must sum to 75s"
 
 
+# ── Brand accent colors ───────────────────────────────────────────────────────
+PURPLE     = (78, 42, 160)          # 80HD brand purple
+GOLD       = (255, 196, 0)          # 80HD brand gold
+BRAND_BAR  = 110                    # height of bottom brand bar in px
+TOP_BAR    = 12                     # height of top accent bar in px
+ICON_SIZE  = 96                     # logo icon size in top-left
+
+# ── Load logo icon (cached) ───────────────────────────────────────────────────
+_ICON_CACHE = None
+
+def get_icon():
+    global _ICON_CACHE
+    if _ICON_CACHE is None:
+        icon_path = os.path.expanduser("~/Desktop/we80hd-profile.png")
+        if os.path.exists(icon_path):
+            raw = Image.open(icon_path).convert("RGBA")
+            _ICON_CACHE = raw.resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS)
+        else:
+            _ICON_CACHE = False
+    return _ICON_CACHE
+
+
 # ── Background generators ─────────────────────────────────────────────────────
 
-def bg_solid(color):
-    img = Image.new("RGBA", (W, H), color + (255,))
+def bg_subtle_gradient():
+    img = Image.new("RGBA", (W, H))
+    px = img.load()
+    top_c = (255, 255, 255)
+    bot_c = (248, 244, 255)
+    for y in range(H):
+        t = y / H
+        r = int(top_c[0] + (bot_c[0] - top_c[0]) * t)
+        g = int(top_c[1] + (bot_c[1] - top_c[1]) * t)
+        b = int(top_c[2] + (bot_c[2] - top_c[2]) * t)
+        for x in range(W):
+            px[x, y] = (r, g, b, 255)
+    return img
+
+
+def bg_accent_gradient():
+    img = Image.new("RGBA", (W, H))
+    px = img.load()
+    top_c = (255, 255, 255)
+    bot_c = (240, 232, 255)
+    for y in range(H):
+        t = y / H
+        r = int(top_c[0] + (bot_c[0] - top_c[0]) * t)
+        g = int(top_c[1] + (bot_c[1] - top_c[1]) * t)
+        b = int(top_c[2] + (bot_c[2] - top_c[2]) * t)
+        for x in range(W):
+            px[x, y] = (r, g, b, 255)
     return img
 
 
 def bg_warm_gradient():
     img = Image.new("RGBA", (W, H))
     px = img.load()
-    top = (255, 165, 30)
-    bot = (210, 70, 0)
+    top = (255, 200, 50)
+    bot = (200, 80, 20)
     for y in range(H):
         t = y / H
         r = int(top[0] + (bot[0] - top[0]) * t)
@@ -164,32 +213,86 @@ def bg_warm_gradient():
 
 
 def make_bg(key):
-    if key == "dark":          return bg_solid(BG_DARK)
-    if key == "darker":        return bg_solid(BG_DARKER)
-    if key == "accent":        return bg_solid(BG_ACCENT)
+    if key == "dark":          return bg_subtle_gradient()
+    if key == "darker":        return bg_subtle_gradient()
+    if key == "accent":        return bg_accent_gradient()
     if key == "warm_gradient": return bg_warm_gradient()
     raise ValueError(f"unknown bg key: {key}")
 
 
-# ── Noise/grain overlay for texture ──────────────────────────────────────────
+# ── Branding overlays ─────────────────────────────────────────────────────────
 
-def add_grain(img, intensity=12):
-    """Adds subtle film grain for a more cinematic feel."""
-    import random
+def add_top_bar(img):
+    draw = ImageDraw.Draw(img)
+    for x in range(W):
+        t = x / W
+        r = int(PURPLE[0] + (GOLD[0] - PURPLE[0]) * t)
+        g = int(PURPLE[1] + (GOLD[1] - PURPLE[1]) * t)
+        b = int(PURPLE[2] + (GOLD[2] - PURPLE[2]) * t)
+        for y in range(TOP_BAR):
+            draw.point((x, y), fill=(r, g, b, 255))
+    return img
+
+
+def add_bottom_brand_bar(img):
+    draw = ImageDraw.Draw(img)
+    bar_y = H - BRAND_BAR
+    # dark purple background
+    draw.rectangle([0, bar_y, W, H], fill=(*PURPLE, 255))
+    # gold accent line at top of bar
+    draw.rectangle([0, bar_y, W, bar_y + 4], fill=(*GOLD, 255))
+
+    icon = get_icon()
+    icon_h = BRAND_BAR - 20
+    text_x = MARGIN_H
+    if icon:
+        icon_small = icon.resize((icon_h, icon_h), Image.LANCZOS)
+        img.paste(icon_small, (MARGIN_H, bar_y + 10), icon_small)
+        text_x = MARGIN_H + icon_h + 20
+
+    font = FONTS["watermark"]
+    handle = "@we80hd"
+    tagline = "follow for more ADHD science"
+    draw.text((text_x, bar_y + 12), handle, font=font, fill=(*GOLD, 255))
+    try:
+        small_font = ImageFont.truetype(FONT_PATH, size=34, index=FONT_IDX["regular"])
+    except:
+        small_font = font
+    draw.text((text_x, bar_y + 62), tagline, font=small_font, fill=(220, 210, 240, 255))
+    return img
+
+
+def add_top_logo(img):
+    icon = get_icon()
+    if not icon:
+        return img
+    logo_small = icon.resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS)
+    img.paste(logo_small, (MARGIN_H, TOP_BAR + 20), logo_small)
+    return img
+
+
+def add_highlight_pill(img, text, font):
+    draw = ImageDraw.Draw(img)
+    bbox = font.getbbox(text)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    cx = W // 2
+    cy = H // 2
+    pad_x, pad_y = 32, 16
+    x0 = cx - tw // 2 - pad_x
+    y0 = cy - th // 2 - pad_y
+    x1 = cx + tw // 2 + pad_x
+    y1 = cy + th // 2 + pad_y
+    r = 24
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
-    for _ in range(W * H // 8):
-        x = random.randint(0, W - 1)
-        y = random.randint(0, H - 1)
-        v = random.randint(-intensity, intensity)
-        draw.point((x, y), fill=(max(0,v), max(0,v), max(0,v), 30))
+    od = ImageDraw.Draw(overlay)
+    od.rounded_rectangle([x0, y0, x1, y1], radius=r, fill=(*GOLD, 60))
     return Image.alpha_composite(img, overlay)
 
 
 # ── Text rendering ────────────────────────────────────────────────────────────
 
 def wrap_text(text, font, max_width):
-    """Naive word-wrap; returns list of lines."""
     words = text.split()
     lines, current = [], []
     for word in words:
@@ -211,44 +314,42 @@ def text_height(font, text):
 
 
 def render_text_on_img(img, line_specs):
-    """
-    line_specs: list of (text, font_key, color_rgba, y_bias)
-    y_bias: fraction of H to offset center (stacks relative to each other)
-    Each line is centered individually at: H/2 + y_bias*H
-    """
     draw = ImageDraw.Draw(img)
+    # safe area: below top logo + bar, above brand bar
+    safe_top = TOP_BAR + ICON_SIZE + 40
+    safe_bot = H - BRAND_BAR - 20
+    safe_h = safe_bot - safe_top
+
     for text, fkey, color, y_bias in line_specs:
         font = FONTS[fkey]
         wrapped = wrap_text(text, font, TEXT_W)
-        # measure full block
         line_heights = [text_height(font, ln) for ln in wrapped]
-        line_spacing = 16
+        line_spacing = 20
         block_h = sum(line_heights) + line_spacing * (len(wrapped) - 1)
-        cy = int(H / 2 + y_bias * TEXT_H) - block_h // 2
-        cy = max(MARGIN_V, min(cy, H - MARGIN_V - block_h))
+        center = safe_top + safe_h // 2 + int(y_bias * safe_h * 0.5)
+        cy = center - block_h // 2
+        cy = max(safe_top, min(cy, safe_bot - block_h))
+
+        # gold highlight pill behind hero text
+        if fkey == "hero" and len(wrapped) == 1:
+            bbox = font.getbbox(wrapped[0])
+            tw = bbox[2] - bbox[0]
+            th = line_heights[0]
+            x0 = (W - tw) // 2 - 28
+            y0 = cy - 12
+            overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            od = ImageDraw.Draw(overlay)
+            od.rounded_rectangle([x0, y0, x0 + tw + 56, y0 + th + 24], radius=20, fill=(*GOLD, 55))
+            img = Image.alpha_composite(img, overlay)
+            draw = ImageDraw.Draw(img)
+
         for i, ln in enumerate(wrapped):
             bbox = font.getbbox(ln)
             lw = bbox[2] - bbox[0]
             lh = line_heights[i]
             x = (W - lw) // 2
-            # subtle text shadow for depth
-            draw.text((x + 2, cy + 2), ln, font=font, fill=(0, 0, 0, 80))
             draw.text((x, cy), ln, font=font, fill=color)
             cy += lh + line_spacing
-    return img
-
-
-def add_watermark(img):
-    draw = ImageDraw.Draw(img)
-    text = "@we80hd"
-    font = FONTS["watermark"]
-    bbox = font.getbbox(text)
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
-    x = W - tw - 48
-    y = H - th - 80
-    draw.text((x + 1, y + 1), text, font=font, fill=(255, 255, 255, 40))
-    draw.text((x, y), text, font=font, fill=(30, 15, 60, WATERMARK_ALPHA))
     return img
 
 
@@ -258,9 +359,10 @@ def generate_frame(shot, path):
     bg_key  = shot["bg"]
     lines   = shot["lines"]
     img = make_bg(bg_key)
+    img = add_top_bar(img)
+    img = add_top_logo(img)
     img = render_text_on_img(img, lines)
-    img = add_watermark(img)
-    img = add_grain(img)
+    img = add_bottom_brand_bar(img)
     # Convert to RGB for JPEG-like save (no alpha in MP4)
     img_rgb = Image.new("RGB", (W, H), (0, 0, 0))
     img_rgb.paste(img, mask=img.split()[3])
