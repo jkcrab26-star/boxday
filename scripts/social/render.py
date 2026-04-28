@@ -41,13 +41,13 @@ FONTS = {
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 WHITE      = (255, 255, 255, 255)
-DARK_TEXT  = (30, 15, 60, 255)      # deep purple for main text on light bg
-GRAY       = (90, 70, 130, 255)     # medium purple for secondary text
-DIMGRAY    = (130, 110, 160, 255)   # lighter purple for tertiary text
-BG_DARK    = (235, 225, 255)        # soft lavender
-BG_DARKER  = (248, 244, 255)        # near white with purple tint
-BG_ACCENT  = (215, 200, 248)        # medium lavender for emphasis shots
-WATERMARK_ALPHA = 200
+DARK_TEXT  = (20, 10, 40, 255)      # near-black purple for main text
+GRAY       = (100, 80, 150, 255)    # medium purple for secondary text
+DIMGRAY    = (150, 130, 180, 255)   # lighter purple for tertiary text
+BG_DARK    = (255, 255, 255)        # pure white
+BG_DARKER  = (255, 255, 255)        # pure white
+BG_ACCENT  = (248, 244, 255)        # very faint lavender tint
+WATERMARK_ALPHA = 160
 
 # ── Shot definitions ──────────────────────────────────────────────────────────
 # Each shot: dur(s), bg keyword, list of (text, font_key, color_rgba, y_bias)
