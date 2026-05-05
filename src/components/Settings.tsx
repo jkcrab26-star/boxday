@@ -1,6 +1,51 @@
 import { useState } from 'react'
 import { useStore } from '../store'
 
+const STRIPE_MONTHLY = 'https://buy.stripe.com/real1'
+const STRIPE_ANNUAL  = 'https://buy.stripe.com/real2'
+
+function UpgradeModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white dark:bg-gray-900 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="text-center">
+          <div className="text-2xl mb-1">⚡</div>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Go Pro</h2>
+          <p className="text-sm text-gray-500 mt-1">Unlimited AI boxing, advanced focus modes, and more.</p>
+        </div>
+        <a
+          href={STRIPE_MONTHLY}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-xl py-3 text-sm transition-colors"
+        >
+          $9 / month
+        </a>
+        <a
+          href={STRIPE_ANNUAL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full text-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded-xl py-3 text-sm transition-colors"
+        >
+          $79 / year <span className="text-xs font-normal text-green-600 ml-1">save 27%</span>
+        </a>
+        <button
+          onClick={onClose}
+          className="block w-full text-center text-xs text-gray-400 hover:text-gray-600 pt-1"
+        >
+          Maybe later
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => i)
 const BLOCK_OPTIONS = [15, 25, 30, 45, 60, 90]
 const RESET_HOUR_OPTIONS = [0, 1, 2, 3, 4, 5, 6]
@@ -16,6 +61,7 @@ export function Settings() {
   const { settings, updateSetting, clearAllData } = useStore()
   const [showAnthropicKey, setShowAnthropicKey] = useState(false)
   const [showOpenAIKey, setShowOpenAIKey] = useState(false)
+  const [showUpgrade, setShowUpgrade] = useState(false)
 
   function confirmClearData() {
     if (window.confirm('Clear all 80HD data? This cannot be undone.')) {
@@ -25,7 +71,20 @@ export function Settings() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 space-y-6 overflow-y-auto h-[calc(100dvh-56px)]">
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
       <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Settings</h1>
+
+      {/* Upgrade to Pro */}
+      <button
+        onClick={() => setShowUpgrade(true)}
+        className="w-full flex items-center justify-between bg-gradient-to-r from-violet-500 to-indigo-500 text-white rounded-2xl px-4 py-4 shadow-md hover:opacity-90 transition-opacity"
+      >
+        <div className="text-left">
+          <div className="font-bold text-sm">Upgrade to 80HD Pro</div>
+          <div className="text-xs opacity-80 mt-0.5">Unlimited AI boxing · Advanced focus · Priority support</div>
+        </div>
+        <span className="text-lg">⚡</span>
+      </button>
 
       {/* AI / BYOK */}
       <section>
