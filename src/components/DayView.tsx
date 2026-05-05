@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -14,11 +14,39 @@ import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/t
 const MUST_DO_CAP = 3
 
 export function DayView() {
-  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, pinToMustDo, unpinFromMustDo, settings } = useStore()
+  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, pinToMustDo, unpinFromMustDo, settings, lastCompletedTaskId, focusSession } = useStore()
   const SLOTS = getSlots(settings.dayStartHour, 22)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [capNudge, setCapNudge] = useState(false)
+  const [momentumTask, setMomentumTask] = useState<Task | null>(null)
+  const [momentumCleared, setMomentumCleared] = useState(false)
+
+  useEffect(() => {
+    if (!lastCompletedTaskId) {
+      setMomentumTask(null)
+      setMomentumCleared(false)
+      return
+    }
+    const remaining = tasks
+      .filter(t => t.status === 'open' && t.scheduledDate === selectedDate)
+      .sort((a, b) => {
+        if (a.scheduledTime && b.scheduledTime) return a.scheduledTime.localeCompare(b.scheduledTime)
+        if (a.scheduledTime) return -1
+        if (b.scheduledTime) return 1
+        return 0
+      })
+    if (remaining.length > 0) {
+      setMomentumTask(remaining[0])
+      setMomentumCleared(false)
+    } else {
+      setMomentumTask(null)
+      setMomentumCleared(true)
+    }
+    const delay = remaining.length > 0 ? 4000 : 3000
+    const timer = setTimeout(() => { setMomentumTask(null); setMomentumCleared(false) }, delay)
+    return () => clearTimeout(timer)
+  }, [lastCompletedTaskId])
 
   const openMustDoCount = tasks.filter(t => t.mustDoToday && t.status === 'open').length
 
@@ -155,6 +183,29 @@ export function DayView() {
           </div>
         )}
       </DragOverlay>
+
+      {/* Momentum banner */}
+      {!focusSession && (momentumTask || momentumCleared) && (
+        <div className="fixed bottom-14 inset-x-0 flex justify-center px-4 z-40 pointer-events-none">
+          <div className="bg-gray-900 text-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-xl pointer-events-auto max-w-sm w-full">
+            <span className="text-green-400 shrink-0">✓</span>
+            <div className="flex-1 min-w-0 text-sm">
+              {momentumTask
+                ? <><span className="text-gray-300">Next up: </span><span className="font-semibold truncate">{momentumTask.title}</span></>
+                : <span>You cleared your schedule!</span>
+              }
+            </div>
+            {momentumTask && (
+              <button
+                onClick={() => { startFocus(momentumTask.id); setMomentumTask(null) }}
+                className="shrink-0 bg-violet-500 hover:bg-violet-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Start ▶
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Edit modal */}
       {editingId && (
