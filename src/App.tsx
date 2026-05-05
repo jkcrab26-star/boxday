@@ -22,11 +22,20 @@ const NAV_ITEMS: { id: View; label: string }[] = [
 ]
 
 export default function App() {
-  const { view, setView, focusSession, init, tasks, selectedDate, coins, lastEarnedCoins, clearEarnedCoins } = useStore()
+  const { view, setView, focusSession, init, tasks, selectedDate, coins, lastEarnedCoins, clearEarnedCoins, updateSetting } = useStore()
   const coinPopRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     init()
+  }, [])
+
+  // Stripe checkout success redirects back with ?pro=1 — flip the entitlement and clean the URL.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('pro') === '1') {
+      updateSetting('isPro', true)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
   }, [])
 
   // Trigger coin pop animation when coins are earned

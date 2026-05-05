@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../store'
-
-const STRIPE_MONTHLY = import.meta.env.VITE_STRIPE_MONTHLY_LINK as string | undefined
-const STRIPE_ANNUAL  = import.meta.env.VITE_STRIPE_ANNUAL_LINK  as string | undefined
+import { STRIPE_MONTHLY, STRIPE_ANNUAL } from '../lib/stripe'
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
   return (

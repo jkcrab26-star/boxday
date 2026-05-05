@@ -1,9 +1,29 @@
 import { useStore } from '../store'
 import { format, parseISO } from '../lib/time'
 import { startOfMonth, endOfMonth, eachDayOfInterval, getDay } from 'date-fns'
+import { STRIPE_MONTHLY } from '../lib/stripe'
 
 export function MonthView() {
-  const { tasks, selectedDate, setSelectedDate, setView } = useStore()
+  const { tasks, selectedDate, setSelectedDate, setView, settings } = useStore()
+
+  if (!settings.isPro) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
+        <span className="text-4xl">📅</span>
+        <div className="font-bold text-lg text-gray-900 dark:text-gray-100">Month view is Pro</div>
+        <p className="text-sm text-gray-500 max-w-xs">See the whole month as a load heat map and spot heavy weeks ahead of time.</p>
+        <a
+          href={STRIPE_MONTHLY ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+        >
+          Upgrade to Pro — $9/mo
+        </a>
+      </div>
+    )
+  }
+
   const base = parseISO(selectedDate)
   const monthStart = startOfMonth(base)
   const monthEnd = endOfMonth(base)

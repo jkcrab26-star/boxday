@@ -9,6 +9,7 @@ export interface AppSettings {
   dailyResetHour: number       // hour at which daily reset triggers, default 4
   anthropicApiKey: string      // BYOK — user's own Anthropic key (optional)
   openaiApiKey: string         // BYOK — user's own OpenAI key (optional)
+  isPro: boolean               // Pro entitlement, flipped via ?pro=1 redirect after Stripe checkout
 }
 
 const SETTINGS_KEY = '80hd_settings'
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   dailyResetHour: 4,
   anthropicApiKey: '',
   openaiApiKey: '',
+  isPro: false,
 }
 
 export function loadSettings(): AppSettings {

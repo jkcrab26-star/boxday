@@ -1,9 +1,28 @@
 import { useStore } from '../store'
 import { getWeekDays, format, parseISO } from '../lib/time'
+import { STRIPE_MONTHLY } from '../lib/stripe'
 
 export function WeekView() {
-  const { tasks, selectedDate, setSelectedDate, setView } = useStore()
+  const { tasks, selectedDate, setSelectedDate, setView, settings } = useStore()
   const weekDays = getWeekDays(selectedDate)
+
+  if (!settings.isPro) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
+        <span className="text-4xl">📅</span>
+        <div className="font-bold text-lg text-gray-900 dark:text-gray-100">Week view is Pro</div>
+        <p className="text-sm text-gray-500 max-w-xs">See your full week at a glance and track momentum across days.</p>
+        <a
+          href={STRIPE_MONTHLY ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+        >
+          Upgrade to Pro — $9/mo
+        </a>
+      </div>
+    )
+  }
 
   function goToDay(date: string) {
     setSelectedDate(date)
