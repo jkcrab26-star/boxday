@@ -32,6 +32,8 @@ jobs:
         env:
           VITE_BASE_PATH: /boxday/
           VITE_ANTHROPIC_API_KEY: ${{ secrets.VITE_ANTHROPIC_API_KEY }}
+          VITE_STRIPE_MONTHLY_LINK: ${{ secrets.VITE_STRIPE_MONTHLY_LINK }}
+          VITE_STRIPE_ANNUAL_LINK: ${{ secrets.VITE_STRIPE_ANNUAL_LINK }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
