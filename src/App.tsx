@@ -34,7 +34,7 @@ export default function App() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('pro') === '1') {
       updateSetting('isPro', true)
-      window.history.replaceState({}, '', window.location.pathname)
+      window.history.replaceState({}, '', window.location.pathname + '?app=1')
     }
   }, [])
 
