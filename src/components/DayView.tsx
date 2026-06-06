@@ -10,6 +10,7 @@ import {
 import { useStore } from '../store'
 import type { Task, TaskList } from '../types'
 import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/time'
+import { fetchCalendarEvents, isConnected as gcalConnected, type GCalEvent } from '../lib/googleCalendar'
 
 const MUST_DO_CAP = 3
 
@@ -21,6 +22,12 @@ export function DayView() {
   const [capNudge, setCapNudge] = useState(false)
   const [momentumTask, setMomentumTask] = useState<Task | null>(null)
   const [momentumCleared, setMomentumCleared] = useState(false)
+  const [calEvents, setCalEvents] = useState<GCalEvent[]>([])
+
+  useEffect(() => {
+    if (!settings.googleCalendarEnabled || !gcalConnected()) { setCalEvents([]); return }
+    fetchCalendarEvents(selectedDate).then(setCalEvents)
+  }, [selectedDate, settings.googleCalendarEnabled])
 
   useEffect(() => {
     if (!lastCompletedTaskId) {
@@ -136,6 +143,7 @@ export function DayView() {
                   <TimeSlot
                     slot={slot}
                     tasks={getTasksForSlot(slot)}
+                    calEvents={calEvents.filter(e => e.startTime === slot || (e.startTime < slot && e.endTime > slot))}
                     onFocus={startFocus}
                     onComplete={completeTask}
                     onEdit={(id) => setEditingId(id)}
@@ -297,9 +305,10 @@ function EditModal({ task, onSave, onClose }: {
   )
 }
 
-function TimeSlot({ slot, tasks, onFocus, onComplete, onEdit, onDelete, onPin }: {
+function TimeSlot({ slot, tasks, calEvents, onFocus, onComplete, onEdit, onDelete, onPin }: {
   slot: string
   tasks: Task[]
+  calEvents: GCalEvent[]
   onFocus: (id: string) => void
   onComplete: (id: string) => void
   onEdit: (id: string) => void
@@ -322,6 +331,16 @@ function TimeSlot({ slot, tasks, onFocus, onComplete, onEdit, onDelete, onPin }:
         )}
       </div>
       <div className="flex-1 flex flex-wrap gap-1 py-1">
+        {calEvents.map(e => (
+          <div
+            key={e.id}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg border border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800 text-xs text-blue-400 dark:text-blue-500 opacity-75 cursor-default select-none"
+            title={`Google Calendar: ${e.startTime}–${e.endTime}`}
+          >
+            <span className="shrink-0 text-[10px]">📅</span>
+            <span className="truncate max-w-[120px]">{e.summary}</span>
+          </div>
+        ))}
         {tasks.map(task => (
           <DraggableTaskChip
             key={task.id}
