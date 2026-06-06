@@ -30,6 +30,7 @@ interface State {
   scheduleTask: (id: string, date: string, time: string | null) => void
   unscheduleTask: (id: string) => void
   completeTask: (id: string, viaFocus?: boolean) => void
+  reopenTask: (id: string) => void
   snoozeTask: (id: string) => void
   dismissTask: (id: string) => void
   setView: (view: View) => void
@@ -170,6 +171,16 @@ export const useStore = create<State>((set, get) => ({
       focusSession: null,
       coins: newLedger,
       lastEarnedCoins: earned > 0 ? earned : null,
+    })
+  },
+
+  reopenTask(id) {
+    set(s => {
+      const tasks = s.tasks.map(t =>
+        t.id === id ? { ...t, status: 'open' as const, completedAt: undefined } : t
+      )
+      saveTasks(tasks)
+      return { tasks }
     })
   },
 

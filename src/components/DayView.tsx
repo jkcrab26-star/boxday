@@ -14,7 +14,7 @@ import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/t
 const MUST_DO_CAP = 3
 
 export function DayView() {
-  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, pinToMustDo, unpinFromMustDo, settings, lastCompletedTaskId, focusSession } = useStore()
+  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, reopenTask, pinToMustDo, unpinFromMustDo, settings, lastCompletedTaskId, focusSession } = useStore()
   const SLOTS = getSlots(settings.dayStartHour, 22)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -166,8 +166,15 @@ export function DayView() {
               </p>
               <div className="space-y-1">
                 {doneTasks.map(t => (
-                  <div key={t.id} className="text-xs text-gray-400 line-through px-2 py-1">
-                    {t.title}
+                  <div key={t.id} className="group flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-100">
+                    <span className="text-xs text-gray-400 line-through flex-1 truncate">{t.title}</span>
+                    <button
+                      onClick={() => reopenTask(t.id)}
+                      className="text-[10px] text-gray-300 hover:text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                      title="Reopen task"
+                    >
+                      ↩
+                    </button>
                   </div>
                 ))}
               </div>
