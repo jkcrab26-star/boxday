@@ -10,6 +10,8 @@ export interface AppSettings {
   anthropicApiKey: string      // BYOK — user's own Anthropic key (optional)
   openaiApiKey: string         // BYOK — user's own OpenAI key (optional)
   isPro: boolean               // Pro entitlement, flipped via ?pro=1 redirect after Stripe checkout
+  negativeReinforcement: boolean // deduct coins when deleting an incomplete task
+  googleCalendarEnabled: boolean
 }
 
 const SETTINGS_KEY = '80hd_settings'
@@ -26,6 +28,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   anthropicApiKey: '',
   openaiApiKey: '',
   isPro: false,
+  negativeReinforcement: false,
+  googleCalendarEnabled: false,
 }
 
 export function loadSettings(): AppSettings {

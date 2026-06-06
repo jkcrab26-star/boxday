@@ -1,4 +1,4 @@
-export type CoinTxType = 'task' | 'box' | 'day_first'
+export type CoinTxType = 'task' | 'box' | 'day_first' | 'dismiss'
 
 export interface CoinTransaction {
   id: string
@@ -20,6 +20,10 @@ export const EARN_RATES = {
   task: 10,      // base: complete any task
   box: 5,        // bonus: complete via Focus Mode timer
   day_first: 0,  // reserved — not active in v0
+} as const
+
+export const DEDUCT_RATES = {
+  dismiss: 5,    // delete/dismiss without completing
 } as const
 
 export const DAILY_CAP = 200
@@ -81,6 +85,28 @@ export function earnCoins(
   }
   saveLedger(newLedger)
   return { ledger: newLedger, earned: totalEarned }
+}
+
+export function deductCoins(
+  ledger: CoinLedger,
+  taskTitle: string,
+): CoinLedger {
+  const amount = DEDUCT_RATES.dismiss
+  const newBalance = Math.max(0, ledger.balance - amount)
+  const tx: CoinTransaction = {
+    id: nanoid(),
+    type: 'dismiss',
+    amount: -(ledger.balance - newBalance), // actual deducted (0 if already at 0)
+    taskTitle,
+    earnedAt: new Date().toISOString(),
+  }
+  const newLedger: CoinLedger = {
+    ...ledger,
+    balance: newBalance,
+    transactions: [tx, ...ledger.transactions].slice(0, 200),
+  }
+  saveLedger(newLedger)
+  return newLedger
 }
 
 function nanoid(): string {

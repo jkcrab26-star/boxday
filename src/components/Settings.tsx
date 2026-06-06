@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store'
 import { STRIPE_MONTHLY, STRIPE_ANNUAL } from '../lib/stripe'
+import { connectGoogleCalendar, clearToken, isConnected as gcalConnected } from '../lib/googleCalendar'
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
   return (
@@ -60,11 +61,27 @@ export function Settings() {
   const [showAnthropicKey, setShowAnthropicKey] = useState(false)
   const [showOpenAIKey, setShowOpenAIKey] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const [gcalConnected, setGcalConnected] = useState(() => gcalConnected())
 
   function confirmClearData() {
     if (window.confirm('Clear all 80HD data? This cannot be undone.')) {
       clearAllData()
     }
+  }
+
+  function handleGcalConnect() {
+    connectGoogleCalendar(ok => {
+      if (ok) {
+        updateSetting('googleCalendarEnabled', true)
+        setGcalConnected(true)
+      }
+    })
+  }
+
+  function handleGcalDisconnect() {
+    clearToken()
+    updateSetting('googleCalendarEnabled', false)
+    setGcalConnected(false)
   }
 
   return (
@@ -135,6 +152,45 @@ export function Settings() {
                 : ' Using round-robin fallback (free).'}
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Calendar */}
+      <section>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+          Calendar
+        </h2>
+        <p className="text-xs text-gray-400 mb-3">
+          Sync tasks to Google Calendar. When you drop a task into a time slot, an event is created automatically.
+        </p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-800">
+          <Row label="Google Calendar">
+            {gcalConnected ? (
+              <button
+                onClick={handleGcalDisconnect}
+                className="text-xs text-red-500 hover:text-red-700 font-medium"
+              >
+                Disconnect
+              </button>
+            ) : (
+              <button
+                onClick={handleGcalConnect}
+                className="flex items-center gap-1.5 text-xs bg-blue-500 hover:bg-blue-600 text-white font-medium px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                </svg>
+                Connect Google
+              </button>
+            )}
+          </Row>
+          {gcalConnected && (
+            <div className="px-4 py-2">
+              <p className="text-[10px] text-gray-400">
+                ✓ Connected — tasks dropped into time slots will sync as Google Calendar events. Calendar events appear greyed out in Day View.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -226,6 +282,28 @@ export function Settings() {
               onChange={v => updateSetting('soundEnabled', v)}
             />
           </Row>
+        </div>
+      </section>
+
+      {/* Coins */}
+      <section>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Coins
+        </h2>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-800">
+          <Row label="Negative reinforcement">
+            <Toggle
+              value={settings.negativeReinforcement}
+              onChange={v => updateSetting('negativeReinforcement', v)}
+            />
+          </Row>
+          {settings.negativeReinforcement && (
+            <div className="px-4 py-2">
+              <p className="text-[10px] text-gray-400">
+                Deleting an incomplete task deducts 5 coins (balance won't go below 0).
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

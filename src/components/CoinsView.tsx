@@ -1,11 +1,12 @@
 import { useStore } from '../store'
 import { format, parseISO } from '../lib/time'
-import { EARN_RATES, DAILY_CAP } from '../lib/coins'
+import { EARN_RATES, DEDUCT_RATES, DAILY_CAP } from '../lib/coins'
 
 const TX_LABELS: Record<string, string> = {
   task: `+${EARN_RATES.task} — task complete`,
   box: `+${EARN_RATES.box} — focus bonus`,
   day_first: `+${EARN_RATES.day_first} — first of day`,
+  dismiss: `-${DEDUCT_RATES.dismiss} — task deleted`,
 }
 
 export function CoinsView() {
@@ -48,9 +49,9 @@ export function CoinsView() {
         </p>
       </div>
 
-      {/* Earn history */}
+      {/* Coin history */}
       <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-        Earn history
+        Coin history
       </h2>
 
       {coins.transactions.length === 0 ? (
@@ -60,24 +61,37 @@ export function CoinsView() {
         </div>
       ) : (
         <div className="space-y-1">
-          {coins.transactions.map(tx => (
-            <div
-              key={tx.id}
-              className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-4 py-2.5"
-            >
-              <span className="text-lg">{tx.type === 'box' ? '🎯' : tx.type === 'day_first' ? '☀️' : '✓'}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{tx.taskTitle}</p>
-                <p className="text-[10px] text-gray-400">{TX_LABELS[tx.type]}</p>
+          {coins.transactions.map(tx => {
+            const isDismiss = tx.type === 'dismiss'
+            return (
+              <div
+                key={tx.id}
+                className={`flex items-center gap-3 rounded-xl px-4 py-2.5 border ${
+                  isDismiss
+                    ? 'bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900'
+                    : 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800'
+                }`}
+              >
+                <span className="text-lg">
+                  {isDismiss ? '✕' : tx.type === 'box' ? '🎯' : tx.type === 'day_first' ? '☀️' : '✓'}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs truncate ${isDismiss ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                    {tx.taskTitle}
+                  </p>
+                  <p className="text-[10px] text-gray-400">{TX_LABELS[tx.type]}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className={`text-xs font-semibold ${isDismiss ? 'text-red-500' : 'text-violet-600'}`}>
+                    {isDismiss ? tx.amount : `+${tx.amount}`}
+                  </span>
+                  <p className="text-[10px] text-gray-400">
+                    {format(parseISO(tx.earnedAt), 'MMM d, h:mm a')}
+                  </p>
+                </div>
               </div>
-              <div className="text-right shrink-0">
-                <span className="text-xs font-semibold text-violet-600">+{tx.amount}</span>
-                <p className="text-[10px] text-gray-400">
-                  {format(parseISO(tx.earnedAt), 'MMM d, h:mm a')}
-                </p>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

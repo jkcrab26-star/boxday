@@ -1,9 +1,10 @@
 import { create } from 'zustand'
-import type { Task, View, Horizon } from './types'
-import { loadTasks, saveTasks, getLastResetDate, setLastResetDate } from './lib/storage'
+import type { Task, TaskList, View, Horizon } from './types'
+import { loadTasks, saveTasks, getLastResetDate, setLastResetDate, loadTaskLists, saveTaskLists } from './lib/storage'
 import { shouldReset, getDayBoundaryDate, estimateMinutes } from './lib/time'
 import { loadSettings, saveSettings, applyTheme, type AppSettings } from './lib/settings'
-import { loadLedger, earnCoins, type CoinLedger } from './lib/coins'
+import { loadLedger, earnCoins, deductCoins, type CoinLedger } from './lib/coins'
+import { createCalendarEvent, isConnected as gcalConnected } from './lib/googleCalendar'
 
 interface FocusSession {
   taskId: string
@@ -13,6 +14,7 @@ interface FocusSession {
 
 interface State {
   tasks: Task[]
+  taskLists: TaskList[]
   view: View
   selectedDate: string
   focusSession: FocusSession | null
@@ -43,10 +45,20 @@ interface State {
   clearEarnedCoins: () => void
   pinToMustDo: (id: string) => void
   unpinFromMustDo: (id: string) => void
+  // Task list actions
+  addTaskList: (name: string) => void
+  deleteTaskList: (listId: string) => void
+  renameTaskList: (listId: string, name: string) => void
+  addListItem: (listId: string, title: string) => void
+  toggleListItem: (listId: string, itemId: string) => void
+  deleteListItem: (listId: string, itemId: string) => void
+  scheduleTaskList: (listId: string, date: string) => void
+  unscheduleTaskList: (listId: string) => void
 }
 
 export const useStore = create<State>((set, get) => ({
   tasks: [],
+  taskLists: [],
   view: 'day',
   selectedDate: getDayBoundaryDate(),
   focusSession: null,
@@ -63,6 +75,7 @@ export const useStore = create<State>((set, get) => ({
     const effectiveToday = getDayBoundaryDate()
     const settings = loadSettings()
     const coins = loadLedger()
+    const taskLists = loadTaskLists()
 
     applyTheme(settings.theme)
 
@@ -74,9 +87,9 @@ export const useStore = create<State>((set, get) => ({
       )
       saveTasks(reset)
       setLastResetDate(effectiveToday)
-      set({ tasks: reset, selectedDate: effectiveToday, settings, coins })
+      set({ tasks: reset, taskLists, selectedDate: effectiveToday, settings, coins })
     } else {
-      set({ tasks, selectedDate: effectiveToday, settings, coins })
+      set({ tasks, taskLists, selectedDate: effectiveToday, settings, coins })
     }
   },
 
@@ -111,11 +124,16 @@ export const useStore = create<State>((set, get) => ({
   },
 
   deleteTask(id) {
-    set(s => {
-      const tasks = s.tasks.filter(t => t.id !== id)
-      saveTasks(tasks)
-      return { tasks }
-    })
+    const { tasks, coins, settings } = get()
+    const task = tasks.find(t => t.id === id)
+    const newTasks = tasks.filter(t => t.id !== id)
+    saveTasks(newTasks)
+    if (task && task.status !== 'done' && settings.negativeReinforcement) {
+      const newCoins = deductCoins(coins, task.title)
+      set({ tasks: newTasks, coins: newCoins })
+    } else {
+      set({ tasks: newTasks })
+    }
   },
 
   setTaskEstimate(id, minutes) {
@@ -132,6 +150,13 @@ export const useStore = create<State>((set, get) => ({
         t.id === id ? { ...t, scheduledDate: date, scheduledTime: time } : t
       )
       saveTasks(tasks)
+      // Fire-and-forget: push to Google Calendar if connected and time is set
+      if (time && s.settings.googleCalendarEnabled && gcalConnected()) {
+        const task = tasks.find(t => t.id === id)
+        if (task) {
+          createCalendarEvent(task.title, date, time, task.estimatedMinutes ?? 30).catch(() => {})
+        }
+      }
       return { tasks }
     })
   },
@@ -265,6 +290,89 @@ export const useStore = create<State>((set, get) => ({
       const tasks = s.tasks.map(t => t.id === id ? { ...t, mustDoToday: false } : t)
       saveTasks(tasks)
       return { tasks }
+    })
+  },
+
+  addTaskList(name) {
+    const list: TaskList = {
+      id: nanoid(),
+      name: name.trim(),
+      items: [],
+      scheduledDate: null,
+      createdAt: new Date().toISOString(),
+    }
+    set(s => {
+      const taskLists = [...s.taskLists, list]
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  deleteTaskList(listId) {
+    set(s => {
+      const taskLists = s.taskLists.filter(l => l.id !== listId)
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  renameTaskList(listId, name) {
+    set(s => {
+      const taskLists = s.taskLists.map(l => l.id === listId ? { ...l, name: name.trim() } : l)
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  addListItem(listId, title) {
+    set(s => {
+      const taskLists = s.taskLists.map(l =>
+        l.id !== listId ? l : {
+          ...l,
+          items: [...l.items, { id: nanoid(), title: title.trim(), done: false }],
+        }
+      )
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  toggleListItem(listId, itemId) {
+    set(s => {
+      const taskLists = s.taskLists.map(l =>
+        l.id !== listId ? l : {
+          ...l,
+          items: l.items.map(i => i.id === itemId ? { ...i, done: !i.done } : i),
+        }
+      )
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  deleteListItem(listId, itemId) {
+    set(s => {
+      const taskLists = s.taskLists.map(l =>
+        l.id !== listId ? l : { ...l, items: l.items.filter(i => i.id !== itemId) }
+      )
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  scheduleTaskList(listId, date) {
+    set(s => {
+      const taskLists = s.taskLists.map(l => l.id === listId ? { ...l, scheduledDate: date } : l)
+      saveTaskLists(taskLists)
+      return { taskLists }
+    })
+  },
+
+  unscheduleTaskList(listId) {
+    set(s => {
+      const taskLists = s.taskLists.map(l => l.id === listId ? { ...l, scheduledDate: null } : l)
+      saveTaskLists(taskLists)
+      return { taskLists }
     })
   },
 }))
