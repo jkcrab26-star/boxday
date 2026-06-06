@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useStore } from '../store'
-import type { Task } from '../types'
+import type { Task, TaskList } from '../types'
 import { estimatedBucket } from '../lib/time'
 
 const BUCKETS = [15, 30, 60, 90] as const
@@ -9,8 +9,10 @@ const MUST_DO_CAP = 3
 export function BrainDump() {
   const [input, setInput] = useState('')
   const [capNudge, setCapNudge] = useState(false)
+  const [showNewList, setShowNewList] = useState(false)
+  const [newListName, setNewListName] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { tasks, addTask, editTask, deleteTask, setTaskEstimate, scheduleTask, setView, selectedDate, pinToMustDo, unpinFromMustDo } = useStore()
+  const { tasks, addTask, editTask, deleteTask, setTaskEstimate, scheduleTask, setView, selectedDate, pinToMustDo, unpinFromMustDo, taskLists, addTaskList, deleteTaskList, renameTaskList, addListItem, toggleListItem, deleteListItem, scheduleTaskList } = useStore()
 
   const dumpTasks = tasks.filter(t => t.status === 'open' && !t.scheduledDate)
   const openMustDoCount = tasks.filter(t => t.mustDoToday && t.status === 'open').length
@@ -43,6 +45,15 @@ export function BrainDump() {
     setView('day')
   }
 
+  function handleCreateList() {
+    if (!newListName.trim()) return
+    addTaskList(newListName.trim())
+    setNewListName('')
+    setShowNewList(false)
+  }
+
+  const dumpLists = taskLists.filter(l => !l.scheduledDate)
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 overflow-y-auto h-[calc(100dvh-56px)]">
       <div className="mb-6">
@@ -58,8 +69,35 @@ export function BrainDump() {
           rows={3}
           className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none text-base leading-relaxed"
         />
-        <p className="text-xs text-gray-400 mt-1">Press Enter to add · Shift+Enter for new line</p>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-xs text-gray-400">Press Enter to add · Shift+Enter for new line</p>
+          <button
+            onClick={() => setShowNewList(s => !s)}
+            className="text-xs text-violet-600 font-medium hover:text-violet-800 flex items-center gap-1"
+          >
+            + New list
+          </button>
+        </div>
       </div>
+
+      {showNewList && (
+        <div className="mb-4 flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3">
+          <input
+            autoFocus
+            type="text"
+            value={newListName}
+            onChange={e => setNewListName(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleCreateList()
+              if (e.key === 'Escape') { setShowNewList(false); setNewListName('') }
+            }}
+            placeholder="List name (e.g. Costco)"
+            className="flex-1 text-sm bg-transparent outline-none text-gray-900 placeholder-gray-400"
+          />
+          <button onClick={handleCreateList} className="text-xs text-violet-600 font-semibold px-2 py-1 hover:bg-violet-100 rounded-lg">Create</button>
+          <button onClick={() => { setShowNewList(false); setNewListName('') }} className="text-xs text-gray-400 px-2 py-1 hover:bg-gray-100 rounded-lg">Cancel</button>
+        </div>
+      )}
 
       {capNudge && (
         <div className="mb-4 text-sm font-semibold text-amber-800 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 flex items-center gap-2">
@@ -69,7 +107,7 @@ export function BrainDump() {
       )}
 
       {dumpTasks.length > 0 && (
-        <div>
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
               Captured ({dumpTasks.length})
@@ -98,7 +136,29 @@ export function BrainDump() {
         </div>
       )}
 
-      {dumpTasks.length === 0 && (
+      {dumpLists.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
+            Lists ({dumpLists.length})
+          </h2>
+          <div className="space-y-3">
+            {dumpLists.map(list => (
+              <TaskListCard
+                key={list.id}
+                list={list}
+                onAddItem={(title) => addListItem(list.id, title)}
+                onToggleItem={(itemId) => toggleListItem(list.id, itemId)}
+                onDeleteItem={(itemId) => deleteListItem(list.id, itemId)}
+                onRename={(name) => renameTaskList(list.id, name)}
+                onDelete={() => deleteTaskList(list.id)}
+                onBoxToday={() => { scheduleTaskList(list.id, selectedDate); setView('day') }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {dumpTasks.length === 0 && dumpLists.length === 0 && (
         <div className="text-center py-12 text-gray-400">
           <p className="text-4xl mb-3">🧠</p>
           <p className="text-sm">Nothing captured yet. Start typing above.</p>
@@ -228,6 +288,151 @@ function DumpTaskRow({
       >
         Box today
       </button>
+    </div>
+  )
+}
+
+function TaskListCard({
+  list,
+  onAddItem,
+  onToggleItem,
+  onDeleteItem,
+  onRename,
+  onDelete,
+  onBoxToday,
+}: {
+  list: TaskList
+  onAddItem: (title: string) => void
+  onToggleItem: (itemId: string) => void
+  onDeleteItem: (itemId: string) => void
+  onRename: (name: string) => void
+  onDelete: () => void
+  onBoxToday: () => void
+}) {
+  const [expanded, setExpanded] = useState(true)
+  const [newItem, setNewItem] = useState('')
+  const [renamingName, setRenamingName] = useState('')
+  const [renaming, setRenaming] = useState(false)
+
+  const doneCount = list.items.filter(i => i.done).length
+  const total = list.items.length
+
+  function handleAddItem() {
+    if (!newItem.trim()) return
+    onAddItem(newItem.trim())
+    setNewItem('')
+  }
+
+  function saveRename() {
+    if (renamingName.trim()) onRename(renamingName.trim())
+    setRenaming(false)
+  }
+
+  return (
+    <div className="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+        <button
+          onClick={() => setExpanded(s => !s)}
+          className="text-gray-400 hover:text-gray-600 text-xs shrink-0 w-4"
+        >
+          {expanded ? '▼' : '▶'}
+        </button>
+
+        {renaming ? (
+          <input
+            autoFocus
+            type="text"
+            value={renamingName}
+            onChange={e => setRenamingName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') saveRename(); if (e.key === 'Escape') setRenaming(false) }}
+            onBlur={saveRename}
+            className="flex-1 text-sm font-semibold text-gray-800 bg-transparent outline-none border-b border-violet-300"
+          />
+        ) : (
+          <button
+            onClick={() => { setRenamingName(list.name); setRenaming(true) }}
+            className="flex-1 text-sm font-semibold text-gray-800 text-left hover:text-violet-700"
+          >
+            🛒 {list.name}
+          </button>
+        )}
+
+        {total > 0 && (
+          <span className="text-xs text-gray-400 font-mono shrink-0">{doneCount}/{total}</span>
+        )}
+
+        <button
+          onClick={onDelete}
+          className="text-xs text-gray-300 hover:text-red-500 px-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+          title="Delete list"
+        >
+          🗑️
+        </button>
+
+        <button
+          onClick={onBoxToday}
+          className="text-xs text-violet-600 font-medium bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg whitespace-nowrap shrink-0"
+        >
+          Box today
+        </button>
+      </div>
+
+      {/* Progress bar */}
+      {total > 0 && (
+        <div className="h-1 bg-gray-100">
+          <div
+            className="h-1 bg-violet-400 transition-all"
+            style={{ width: `${(doneCount / total) * 100}%` }}
+          />
+        </div>
+      )}
+
+      {/* Items */}
+      {expanded && (
+        <div className="px-4 py-2">
+          <div className="space-y-1 mb-2">
+            {list.items.map(item => (
+              <div key={item.id} className="group flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  checked={item.done}
+                  onChange={() => onToggleItem(item.id)}
+                  className="w-3.5 h-3.5 accent-violet-500 shrink-0 cursor-pointer"
+                />
+                <span className={`flex-1 text-sm ${item.done ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                  {item.title}
+                </span>
+                <button
+                  onClick={() => onDeleteItem(item.id)}
+                  className="text-xs text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                  title="Remove item"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2 mt-1">
+            <input
+              type="text"
+              value={newItem}
+              onChange={e => setNewItem(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleAddItem() }}
+              placeholder="Add item..."
+              className="flex-1 text-xs text-gray-700 placeholder-gray-400 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:ring-1 focus:ring-violet-400"
+            />
+            <button
+              onClick={handleAddItem}
+              disabled={!newItem.trim()}
+              className="text-xs text-violet-600 font-medium px-2 py-1.5 hover:bg-violet-50 rounded-lg disabled:opacity-40"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

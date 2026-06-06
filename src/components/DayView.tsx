@@ -8,13 +8,13 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core'
 import { useStore } from '../store'
-import type { Task } from '../types'
+import type { Task, TaskList } from '../types'
 import { getSlots, getSectionLabel, formatSlot, estimatedBucket } from '../lib/time'
 
 const MUST_DO_CAP = 3
 
 export function DayView() {
-  const { tasks, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, reopenTask, pinToMustDo, unpinFromMustDo, settings, lastCompletedTaskId, focusSession } = useStore()
+  const { tasks, taskLists, selectedDate, scheduleTask, unscheduleTask, startFocus, editTask, deleteTask, completeTask, reopenTask, pinToMustDo, unpinFromMustDo, settings, lastCompletedTaskId, focusSession, toggleListItem, deleteListItem, addListItem, unscheduleTaskList } = useStore()
   const SLOTS = getSlots(settings.dayStartHour, 22)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -148,7 +148,7 @@ export function DayView() {
           </div>
         </div>
 
-        {/* Right sidebar: unscheduled pile + done */}
+        {/* Right sidebar: unscheduled pile + lists + done */}
         <div className="w-40 sm:w-56 md:w-64 border-l border-gray-200 bg-gray-50 overflow-y-auto flex flex-col">
           <UnscheduledPile
             tasks={[...getUnscheduledForGrid(), ...unscheduledTasks]}
@@ -158,6 +158,18 @@ export function DayView() {
             onDelete={deleteTask}
             onPin={(id, pinned) => handlePin(id, pinned)}
           />
+
+          {/* Scheduled lists */}
+          {taskLists.filter(l => l.scheduledDate === selectedDate).map(list => (
+            <ScheduledListCard
+              key={list.id}
+              list={list}
+              onToggleItem={(itemId) => toggleListItem(list.id, itemId)}
+              onDeleteItem={(itemId) => deleteListItem(list.id, itemId)}
+              onAddItem={(title) => addListItem(list.id, title)}
+              onUnschedule={() => unscheduleTaskList(list.id)}
+            />
+          ))}
 
           {doneTasks.length > 0 && (
             <div className="px-3 py-2 border-t border-gray-200">
@@ -451,6 +463,102 @@ function DraggableTaskChip({ task, onFocus, onComplete, onEdit, onDelete, onPin,
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ScheduledListCard({
+  list,
+  onToggleItem,
+  onDeleteItem,
+  onAddItem,
+  onUnschedule,
+}: {
+  list: TaskList
+  onToggleItem: (itemId: string) => void
+  onDeleteItem: (itemId: string) => void
+  onAddItem: (title: string) => void
+  onUnschedule: () => void
+}) {
+  const [expanded, setExpanded] = useState(true)
+  const [newItem, setNewItem] = useState('')
+
+  const doneCount = list.items.filter(i => i.done).length
+  const total = list.items.length
+
+  function handleAddItem() {
+    if (!newItem.trim()) return
+    onAddItem(newItem.trim())
+    setNewItem('')
+  }
+
+  return (
+    <div className="mx-3 my-2 bg-white border border-blue-100 rounded-xl overflow-hidden shadow-sm">
+      <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-100">
+        <button onClick={() => setExpanded(s => !s)} className="text-gray-400 text-[10px] shrink-0">
+          {expanded ? '▼' : '▶'}
+        </button>
+        <span className="flex-1 text-xs font-semibold text-gray-700 truncate">🛒 {list.name}</span>
+        {total > 0 && (
+          <span className="text-[10px] text-gray-400 font-mono shrink-0">{doneCount}/{total}</span>
+        )}
+        <button
+          onClick={onUnschedule}
+          className="text-[10px] text-gray-300 hover:text-gray-600 px-1 shrink-0"
+          title="Move back to dump"
+        >
+          ↩
+        </button>
+      </div>
+
+      {total > 0 && (
+        <div className="h-0.5 bg-gray-100">
+          <div className="h-0.5 bg-violet-400 transition-all" style={{ width: `${(doneCount / total) * 100}%` }} />
+        </div>
+      )}
+
+      {expanded && (
+        <div className="px-3 py-2">
+          <div className="space-y-1 mb-2">
+            {list.items.map(item => (
+              <div key={item.id} className="group flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  checked={item.done}
+                  onChange={() => onToggleItem(item.id)}
+                  className="w-3 h-3 accent-violet-500 shrink-0 cursor-pointer"
+                />
+                <span className={`flex-1 text-[11px] leading-tight ${item.done ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                  {item.title}
+                </span>
+                <button
+                  onClick={() => onDeleteItem(item.id)}
+                  className="text-[10px] text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100 shrink-0"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 mt-1">
+            <input
+              type="text"
+              value={newItem}
+              onChange={e => setNewItem(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleAddItem() }}
+              placeholder="Add item..."
+              className="flex-1 text-[11px] text-gray-700 placeholder-gray-400 bg-gray-50 border border-gray-200 rounded px-1.5 py-1 outline-none focus:ring-1 focus:ring-violet-400"
+            />
+            <button
+              onClick={handleAddItem}
+              disabled={!newItem.trim()}
+              className="text-[10px] text-violet-600 font-medium px-1.5 py-1 hover:bg-violet-50 rounded disabled:opacity-40"
+            >
+              +
+            </button>
           </div>
         </div>
       )}

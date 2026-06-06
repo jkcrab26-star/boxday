@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store'
 import { STRIPE_MONTHLY, STRIPE_ANNUAL } from '../lib/stripe'
-import { connectGoogleCalendar, clearToken, isConnected as gcalConnected } from '../lib/googleCalendar'
+import { connectGoogleCalendar, clearToken, isConnected as isGcalConnected } from '../lib/googleCalendar'
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
   return (
@@ -61,7 +61,7 @@ export function Settings() {
   const [showAnthropicKey, setShowAnthropicKey] = useState(false)
   const [showOpenAIKey, setShowOpenAIKey] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  const [gcalConnected, setGcalConnected] = useState(() => gcalConnected())
+  const [gcalConnected, setGcalConnected] = useState(() => isGcalConnected())
 
   function confirmClearData() {
     if (window.confirm('Clear all 80HD data? This cannot be undone.')) {

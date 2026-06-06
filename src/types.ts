@@ -14,3 +14,17 @@ export interface Task {
   createdAt: string             // ISO timestamp
   completedAt?: string          // ISO timestamp, set when status → done
 }
+
+export interface TaskListItem {
+  id: string
+  title: string
+  done: boolean
+}
+
+export interface TaskList {
+  id: string
+  name: string
+  items: TaskListItem[]
+  scheduledDate: string | null
+  createdAt: string
+}
