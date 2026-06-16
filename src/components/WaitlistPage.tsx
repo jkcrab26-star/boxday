@@ -28,7 +28,12 @@ export default function WaitlistPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!FORMSPREE_ID) {
-      setStatus('success');
+      if (import.meta.env.DEV) {
+        console.warn('VITE_FORMSPREE_ID not set — add it to .env.local to test real submissions');
+        setStatus('success');
+      } else {
+        setStatus('error');
+      }
       return;
     }
     setStatus('submitting');
