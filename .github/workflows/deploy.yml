@@ -35,6 +35,7 @@ jobs:
           VITE_STRIPE_MONTHLY_LINK: ${{ secrets.VITE_STRIPE_MONTHLY_LINK }}
           VITE_STRIPE_ANNUAL_LINK: ${{ secrets.VITE_STRIPE_ANNUAL_LINK }}
           VITE_FORMSPREE_ID: ${{ secrets.VITE_FORMSPREE_ID }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
