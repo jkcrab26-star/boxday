@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useStore } from './store'
+import { applyTheme } from './lib/settings'
 import { BrainDump } from './components/BrainDump'
 import { DayView } from './components/DayView'
 import { WeekView } from './components/WeekView'
@@ -38,6 +39,17 @@ export default function App() {
     }
   }, [])
 
+  // Re-apply theme when OS dark-mode preference changes (relevant when theme === 'system')
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = () => {
+      const { settings } = useStore.getState()
+      if (settings.theme === 'system') applyTheme('system')
+    }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
   // Trigger coin pop animation when coins are earned
   useEffect(() => {
     if (lastEarnedCoins && coinPopRef.current) {
@@ -55,9 +67,9 @@ export default function App() {
   const dayLabel = format(parseISO(selectedDate), 'EEE MMM d')
 
   return (
-    <div className="min-h-dvh flex flex-col bg-[#fdf8f0]">
+    <div className="min-h-dvh flex flex-col bg-[#fdf8f0] dark:bg-[#111110]">
       {/* Top nav */}
-      <header className="h-14 border-b border-amber-100 bg-white flex items-center px-4 gap-2 shrink-0">
+      <header className="h-14 border-b border-amber-100 dark:border-gray-800 bg-white dark:bg-gray-950 flex items-center px-4 gap-2 shrink-0">
         <div className="flex items-center gap-2 shrink-0">
           <img src="/we80hd-logo.svg" alt="80HD" className="h-6" />
           <span className="text-xs text-gray-400 hidden sm:inline">{dayLabel}</span>
@@ -71,8 +83,8 @@ export default function App() {
               className={`
                 relative px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap shrink-0
                 ${view === item.id
-                  ? 'bg-violet-50 text-violet-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }
               `}
             >
@@ -96,7 +108,7 @@ export default function App() {
           <button
             onClick={() => setView('coins')}
             className={`relative flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${view === 'coins' ? 'bg-violet-50 text-violet-700' : 'text-gray-600 hover:bg-gray-100'}`}
+              ${view === 'coins' ? 'bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           >
             <span>🪙</span>
             <span className="font-semibold text-amber-600">{coins.balance}</span>
@@ -112,7 +124,7 @@ export default function App() {
           <button
             onClick={() => setView('settings')}
             className={`px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${view === 'settings' ? 'bg-violet-50 text-violet-700' : 'text-gray-600 hover:bg-gray-100'}`}
+              ${view === 'settings' ? 'bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
             title="Settings"
           >
             ⚙️

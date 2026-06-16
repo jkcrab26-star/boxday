@@ -4,7 +4,7 @@ export interface AppSettings {
   eveningStartHour: number     // "Evening" section label, default 17
   defaultBlockMinutes: number  // default 25
   soundEnabled: boolean
-  theme: 'light' | 'dark'
+  theme: 'light' | 'dark' | 'system'
   ambientPulse: boolean        // Ambient Time Pulse on/off in focus mode
   dailyResetHour: number       // hour at which daily reset triggers, default 4
   anthropicApiKey: string      // BYOK — user's own Anthropic key (optional)
@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   eveningStartHour: 17,
   defaultBlockMinutes: 25,
   soundEnabled: true,
-  theme: 'light',
+  theme: 'system',
   ambientPulse: true,
   dailyResetHour: 4,
   anthropicApiKey: '',
@@ -46,6 +46,9 @@ export function saveSettings(settings: AppSettings): void {
   applyTheme(settings.theme)
 }
 
-export function applyTheme(theme: 'light' | 'dark'): void {
-  document.documentElement.setAttribute('data-theme', theme)
+export function applyTheme(theme: 'light' | 'dark' | 'system'): void {
+  const resolved = theme === 'system'
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : theme
+  document.documentElement.setAttribute('data-theme', resolved)
 }

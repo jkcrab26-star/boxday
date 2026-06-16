@@ -314,18 +314,22 @@ export function Settings() {
         </h2>
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-800">
           <Row label="Theme">
-            <div className="flex gap-2">
-              {(['light', 'dark'] as const).map(t => (
+            <div className="flex gap-1">
+              {([
+                { value: 'light', label: '☀️ Light' },
+                { value: 'system', label: '⚙️ Auto' },
+                { value: 'dark', label: '🌙 Dark' },
+              ] as const).map(({ value, label }) => (
                 <button
-                  key={t}
-                  onClick={() => updateSetting('theme', t)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium capitalize ${
-                    settings.theme === t
+                  key={value}
+                  onClick={() => updateSetting('theme', value)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium ${
+                    settings.theme === value
                       ? 'bg-violet-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
-                  {t === 'light' ? '☀️ Light' : '🌙 Dark'}
+                  {label}
                 </button>
               ))}
             </div>
