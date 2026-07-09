@@ -18,22 +18,34 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Go Pro</h2>
           <p className="text-sm text-gray-500 mt-1">Unlimited AI boxing, advanced focus modes, and more.</p>
         </div>
-        <a
-          href={STRIPE_MONTHLY}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-xl py-3 text-sm transition-colors"
-        >
-          $9 / month
-        </a>
-        <a
-          href={STRIPE_ANNUAL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full text-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded-xl py-3 text-sm transition-colors"
-        >
-          $79 / year <span className="text-xs font-normal text-green-600 ml-1">save 27%</span>
-        </a>
+        {STRIPE_MONTHLY ? (
+          <a
+            href={STRIPE_MONTHLY}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-xl py-3 text-sm transition-colors"
+          >
+            $9 / month
+          </a>
+        ) : (
+          <span className="block w-full text-center bg-violet-300 text-white font-semibold rounded-xl py-3 text-sm cursor-not-allowed">
+            $9 / month
+          </span>
+        )}
+        {STRIPE_ANNUAL ? (
+          <a
+            href={STRIPE_ANNUAL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded-xl py-3 text-sm transition-colors"
+          >
+            $79 / year <span className="text-xs font-normal text-green-600 ml-1">save 27%</span>
+          </a>
+        ) : (
+          <span className="block w-full text-center bg-gray-100 dark:bg-gray-800 text-gray-400 font-semibold rounded-xl py-3 text-sm cursor-not-allowed">
+            $79 / year <span className="text-xs font-normal ml-1">save 27%</span>
+          </span>
+        )}
         <button
           onClick={onClose}
           className="block w-full text-center text-xs text-gray-400 hover:text-gray-600 pt-1"

@@ -12,14 +12,20 @@ export function MonthView() {
         <span className="text-4xl">📅</span>
         <div className="font-bold text-lg text-gray-900 dark:text-gray-100">Month view is Pro</div>
         <p className="text-sm text-gray-500 max-w-xs">See the whole month as a load heat map and spot heavy weeks ahead of time.</p>
-        <a
-          href={STRIPE_MONTHLY ?? '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
-        >
-          Upgrade to Pro — $9/mo
-        </a>
+        {STRIPE_MONTHLY ? (
+          <a
+            href={STRIPE_MONTHLY}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+          >
+            Upgrade to Pro — $9/mo
+          </a>
+        ) : (
+          <span className="bg-violet-300 text-white font-bold px-6 py-3 rounded-xl text-sm cursor-not-allowed">
+            Upgrade to Pro — $9/mo
+          </span>
+        )}
       </div>
     )
   }
