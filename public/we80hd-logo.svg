@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 32" height="32" fill="none">
+  <!-- Box icon (matches public/box.svg) -->
+  <rect width="32" height="32" rx="8" fill="#5B6EF5"/>
+  <rect x="8" y="14" width="16" height="12" rx="2" fill="white"/>
+  <!-- 80HD wordmark -->
+  <text x="40" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="800" fill="#5B6EF5" letter-spacing="-0.5">80HD</text>
+</svg>
