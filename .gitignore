@@ -4,3 +4,4 @@ dist/
 *.tsbuildinfo
 .cache/
 public/social-samples/*.mp4
+.DS_Store
